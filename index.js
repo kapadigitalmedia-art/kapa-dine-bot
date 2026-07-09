@@ -7,6 +7,9 @@ require("dotenv").config();
 
 const app = express();
 app.use(express.json());
+const hubRouter = require("./hub");
+app.use("/hub", hubRouter);
+app.use(require("express").static(__dirname));
 
 // ── CONSTANTS ──────────────────────────────────────────────────────
 const WHATSAPP_TOKEN  = process.env.WHATSAPP_TOKEN;
