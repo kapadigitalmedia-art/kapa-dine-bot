@@ -133,6 +133,27 @@ tr:hover td{background:#FAFAF8}
 /* PURCHASE STATUS */
 .purchase-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
 .purchase-row:last-child{border-bottom:none}
+/* POS */
+.pos-table-card{background:#fff;border:2px solid var(--border);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:var(--transition)}
+.pos-table-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow)}
+.pos-table-card.occupied{border-color:var(--primary);background:var(--primary-light)}
+.pos-table-card.available{border-color:#86EFAC;background:#F0FFF4}
+.pos-table-num{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:4px}
+.pos-table-status{font-size:11.5px;font-weight:600}
+.pos-menu-item{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:var(--transition);text-align:center}
+.pos-menu-item:hover{border-color:var(--primary);box-shadow:var(--shadow)}
+.pos-menu-item:active{transform:scale(0.97)}
+.pos-menu-name{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.pos-menu-price{font-size:14px;font-weight:800;color:var(--primary)}
+.pos-menu-cat{font-size:10.5px;color:var(--text-light);margin-bottom:6px}
+.pos-cat-btn{padding:7px 14px;border-radius:99px;border:1.5px solid var(--border);background:#fff;font-size:12.5px;font-weight:600;cursor:pointer;transition:var(--transition);white-space:nowrap}
+.pos-cat-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.pos-order-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.pos-order-item:last-child{border-bottom:none}
+.pos-qty-btn{width:26px;height:26px;border-radius:6px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:var(--transition)}
+.pos-qty-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+.pos-pay-btn{padding:9px;border-radius:9px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:12.5px;font-weight:600;transition:var(--transition)}
+.pos-pay-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 /* EMPTY STATE */
 .empty{text-align:center;padding:40px 20px;color:var(--text-light)}
 .empty i{font-size:40px;opacity:0.3;display:block;margin-bottom:12px}
@@ -179,6 +200,7 @@ tr:hover td{background:#FAFAF8}
       <div class="nav-group-label">Operations</div>
       <div class="nav-item" onclick="showPage('inventory')"><span class="ic"><i class="ti ti-box"></i></span> Inventory</div>
       <div class="nav-item" onclick="showPage('purchases')"><span class="ic"><i class="ti ti-receipt"></i></span> Purchases</div>
+      <div class="nav-item" onclick="showPage('pos',event)"><span class="ic"><i class="ti ti-device-tablet"></i></span> POS</div>
       <div class="nav-group-label">People</div>
       <div class="nav-item" onclick="showPage('staff')"><span class="ic"><i class="ti ti-users"></i></span> Staff</div>
       <div class="nav-item" onclick="showPage('leave')"><span class="ic"><i class="ti ti-calendar-off"></i></span> Leave</div>
@@ -352,6 +374,101 @@ tr:hover td{background:#FAFAF8}
           </div>
         </div>
       </div>
+<!-- POS PAGE -->
+<div class="page" id="page-pos">
+  <div class="page-hdr">
+    <div><h2>Point of Sale</h2><p>Table orders and billing</p></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" onclick="showPosView('tables')"><i class="ti ti-layout-grid"></i> Tables</button>
+      <button class="btn btn-sm" onclick="showPosView('history')"><i class="ti ti-history"></i> Orders</button>
+      <button class="btn btn-primary btn-sm" onclick="showPosView('order')"><i class="ti ti-plus"></i> New Order</button>
+    </div>
+  </div>
+
+  <!-- TABLE VIEW -->
+  <div id="posTablesView">
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px" id="tablesGrid"></div>
+  </div>
+
+  <!-- ORDER VIEW -->
+  <div id="posOrderView" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:20px">
+      <!-- LEFT: MENU -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <select id="posTableSelect" style="padding:8px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-weight:600;outline:none;background:#fff">
+            <option value="">Select Table</option>
+            <option value="Table 1">Table 1</option>
+            <option value="Table 2">Table 2</option>
+            <option value="Table 3">Table 3</option>
+            <option value="Table 4">Table 4</option>
+            <option value="Table 5">Table 5</option>
+            <option value="Table 6">Table 6</option>
+            <option value="Table 7">Table 7</option>
+            <option value="Table 8">Table 8</option>
+            <option value="Table 9">Table 9</option>
+            <option value="Table 10">Table 10</option>
+            <option value="Takeaway">Takeaway</option>
+          </select>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="posCategoryTabs">
+            <button class="pos-cat-btn active" onclick="filterMenuCat('All',this)">All</button>
+            <button class="pos-cat-btn" onclick="filterMenuCat('Rice',this)">🍚 Rice</button>
+            <button class="pos-cat-btn" onclick="filterMenuCat('Noodles',this)">🍜 Noodles</button>
+            <button class="pos-cat-btn" onclick="filterMenuCat('Lauk',this)">🍛 Lauk</button>
+            <button class="pos-cat-btn" onclick="filterMenuCat('Seafood',this)">🦐 Seafood</button>
+            <button class="pos-cat-btn" onclick="filterMenuCat('Soup',this)">🥣 Soup</button>
+            <button class="pos-cat-btn" onclick="filterMenuCat('Drinks',this)">🥤 Drinks</button>
+            <button class="pos-cat-btn" onclick="filterMenuCat('Desserts',this)">🍮 Desserts</button>
+          </div>
+        </div>
+        <input type="text" id="posMenuSearch" placeholder="Search menu items..." oninput="filterMenu()" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;width:100%" />
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-height:500px;overflow-y:auto;padding-right:4px" id="posMenuGrid"></div>
+      </div>
+      <!-- RIGHT: ORDER SUMMARY -->
+      <div style="background:#fff;border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;max-height:680px">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:15px;font-weight:700;color:var(--navy)" id="posOrderTitle">New Order</div>
+          <button onclick="clearOrder()" style="font-size:12px;color:var(--primary);background:none;border:none;cursor:pointer;font-weight:600">Clear All</button>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:12px 16px" id="posOrderItems">
+          <div class="empty" style="padding:30px 0"><i class="ti ti-shopping-cart"></i><p>No items added yet</p></div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;color:var(--text-light)">
+            <span>Subtotal</span><span id="posSubtotal">RM 0.00</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;color:var(--text-light)">
+            <span>SST (6%)</span><span id="posTax">RM 0.00</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;color:var(--navy);margin-bottom:14px;padding-top:10px;border-top:1px solid var(--border)">
+            <span>Total</span><span id="posTotal">RM 0.00</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+            <button class="pos-pay-btn active" onclick="selectPayment('Cash')" id="payBtnCash">💵 Cash</button>
+            <button class="pos-pay-btn" onclick="selectPayment('Card')" id="payBtnCard">💳 Card</button>
+            <button class="pos-pay-btn" onclick="selectPayment('QR')" id="payBtnQR">📱 QR</button>
+          </div>
+          <input type="text" id="posOrderNotes" placeholder="Order notes (optional)..." style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:12.5px;outline:none;margin-bottom:12px" />
+          <button class="btn btn-primary" style="width:100%;padding:12px;font-size:14px" onclick="placeOrder()">
+            <i class="ti ti-check"></i> Place Order & Send to Kitchen
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER HISTORY -->
+  <div id="posHistoryView" style="display:none">
+    <div class="card">
+      <div class="card-hdr"><h3>Today Orders</h3><button class="btn btn-sm" onclick="loadOrderHistory()"><i class="ti ti-refresh"></i> Refresh</button></div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Order #</th><th>Table</th><th>Items</th><th>Total</th><th>Payment</th><th>Time</th><th>Status</th></tr></thead>
+        <tbody id="posOrderHistory"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</div>
 
       <!-- LEAVE PAGE -->
       <div class="page" id="page-leave">
@@ -470,7 +587,7 @@ function showPage(name) {
   if (name === "inventory") loadInventory();
   if (name === "purchases") { document.getElementById("purDateFilter").value = getTodayStr(); loadPurchases(); }
   if (name === "staff") loadStaff();
-  if (name === "leave") loadLeave();
+  if (name === "pos") showPosView("tables");
 }
 
 async function zohoGet(report, params) {
@@ -720,6 +837,242 @@ if (token && companyId) {
   document.getElementById("loginWrap").style.display = "none";
   document.getElementById("app").style.display = "flex";
   loadDashboard();
+}
+
+// ── POS SYSTEM ─────────────────────────────────────────────────────
+var posOrder = [];
+var posPaymentMethod = "Cash";
+var posCurrentCat = "All";
+var posActiveTable = "";
+
+var posMenu = [
+  // Rice
+  { id:1, name:"Nasi Lemak", price:8.00, cat:"Rice", emoji:"🍚" },
+  { id:2, name:"Nasi Goreng Kampung", price:9.00, cat:"Rice", emoji:"🍳" },
+  { id:3, name:"Nasi Goreng Seafood", price:12.00, cat:"Rice", emoji:"🦐" },
+  { id:4, name:"Nasi Ayam", price:9.50, cat:"Rice", emoji:"🍗" },
+  { id:5, name:"Nasi Briyani Ayam", price:13.00, cat:"Rice", emoji:"🍛" },
+  { id:6, name:"Nasi Briyani Kambing", price:16.00, cat:"Rice", emoji:"🥘" },
+  // Noodles
+  { id:7, name:"Mee Goreng Mamak", price:8.50, cat:"Noodles", emoji:"🍜" },
+  { id:8, name:"Char Kuey Teow", price:9.00, cat:"Noodles", emoji:"🥡" },
+  { id:9, name:"Laksa", price:10.00, cat:"Noodles", emoji:"🍲" },
+  { id:10, name:"Bak Kut Teh Noodle", price:12.00, cat:"Noodles", emoji:"🍝" },
+  { id:11, name:"Wantan Mee", price:8.00, cat:"Noodles", emoji:"🍥" },
+  // Lauk
+  { id:12, name:"Ayam Goreng", price:7.00, cat:"Lauk", emoji:"🍗" },
+  { id:13, name:"Rendang Ayam", price:10.00, cat:"Lauk", emoji:"🥩" },
+  { id:14, name:"Daging Masak Merah", price:12.00, cat:"Lauk", emoji:"🥘" },
+  { id:15, name:"Kangkung Belacan", price:7.00, cat:"Lauk", emoji:"🥬" },
+  { id:16, name:"Telur Dadar", price:4.00, cat:"Lauk", emoji:"🍳" },
+  // Seafood
+  { id:17, name:"Ikan Bakar", price:18.00, cat:"Seafood", emoji:"🐟" },
+  { id:18, name:"Udang Masak Butter", price:22.00, cat:"Seafood", emoji:"🦐" },
+  { id:19, name:"Ketam Masak Lemak", price:25.00, cat:"Seafood", emoji:"🦀" },
+  { id:20, name:"Sotong Goreng Tepung", price:16.00, cat:"Seafood", emoji:"🦑" },
+  // Soup
+  { id:21, name:"Sup Tulang", price:12.00, cat:"Soup", emoji:"🍖" },
+  { id:22, name:"Sup Ayam", price:9.00, cat:"Soup", emoji:"🥣" },
+  { id:23, name:"Tom Yam Seafood", price:18.00, cat:"Soup", emoji:"🫕" },
+  // Drinks
+  { id:24, name:"Teh Tarik", price:3.00, cat:"Drinks", emoji:"☕" },
+  { id:25, name:"Teh Ais", price:3.50, cat:"Drinks", emoji:"🧊" },
+  { id:26, name:"Kopi O", price:2.50, cat:"Drinks", emoji:"☕" },
+  { id:27, name:"Milo Ais", price:4.00, cat:"Drinks", emoji:"🥤" },
+  { id:28, name:"Air Sirap", price:2.00, cat:"Drinks", emoji:"🍹" },
+  { id:29, name:"Air Mineral", price:2.00, cat:"Drinks", emoji:"💧" },
+  { id:30, name:"Jus Oren", price:5.00, cat:"Drinks", emoji:"🍊" },
+  // Desserts
+  { id:31, name:"Cendol", price:5.00, cat:"Desserts", emoji:"🍧" },
+  { id:32, name:"ABC", price:5.50, cat:"Desserts", emoji:"🍨" },
+  { id:33, name:"Kuih Lapis", price:3.00, cat:"Desserts", emoji:"🎂" },
+  { id:34, name:"Pisang Goreng", price:4.00, cat:"Desserts", emoji:"🍌" },
+];
+
+function showPosView(view) {
+  document.getElementById("posTablesView").style.display = "none";
+  document.getElementById("posOrderView").style.display = "none";
+  document.getElementById("posHistoryView").style.display = "none";
+  if (view === "tables") { document.getElementById("posTablesView").style.display = "block"; renderTables(); }
+  if (view === "order") { document.getElementById("posOrderView").style.display = "block"; renderMenu(); }
+  if (view === "history") { document.getElementById("posHistoryView").style.display = "block"; loadOrderHistory(); }
+}
+
+function renderTables() {
+  var orders = JSON.parse(localStorage.getItem("dine_pos_orders") || "[]");
+  var occupied = orders.filter(function(o){ return o.status === "Open"; }).map(function(o){ return o.table; });
+  var html = "";
+  for (var i = 1; i <= 10; i++) {
+    var tName = "Table " + i;
+    var isOccupied = occupied.indexOf(tName) !== -1;
+    var order = orders.find(function(o){ return o.table === tName && o.status === "Open"; });
+    html += '<div class="pos-table-card ' + (isOccupied ? "occupied" : "available") + '" onclick="openTable(\'' + tName + '\')">';
+    html += '<div class="pos-table-num">' + i + '</div>';
+    html += '<div class="pos-table-status" style="color:' + (isOccupied ? "var(--primary)" : "var(--success)") + '">' + (isOccupied ? "Occupied" : "Available") + '</div>';
+    if (order) html += '<div style="font-size:11px;color:var(--text-light);margin-top:4px">RM ' + parseFloat(order.total||0).toFixed(2) + '</div>';
+    html += '</div>';
+  }
+  // Takeaway
+  html += '<div class="pos-table-card available" onclick="openTable(\'Takeaway\')" style="border-style:dashed"><div class="pos-table-num" style="font-size:16px">🥡</div><div class="pos-table-status" style="color:var(--success)">Takeaway</div></div>';
+  document.getElementById("tablesGrid").innerHTML = html;
+}
+
+function openTable(tName) {
+  posActiveTable = tName;
+  document.getElementById("posTableSelect").value = tName;
+  var orders = JSON.parse(localStorage.getItem("dine_pos_orders") || "[]");
+  var existing = orders.find(function(o){ return o.table === tName && o.status === "Open"; });
+  if (existing) {
+    posOrder = existing.items || [];
+    updateOrderSummary();
+  } else {
+    clearOrder();
+  }
+  showPosView("order");
+}
+
+function renderMenu() {
+  var items = posMenu.filter(function(item) {
+    var catMatch = posCurrentCat === "All" || item.cat === posCurrentCat;
+    var search = document.getElementById("posMenuSearch") ? document.getElementById("posMenuSearch").value.toLowerCase() : "";
+    var searchMatch = !search || item.name.toLowerCase().includes(search);
+    return catMatch && searchMatch;
+  });
+  var html = items.map(function(item) {
+    return '<div class="pos-menu-item" onclick="addToOrder(' + item.id + ')">' +
+      '<div style="font-size:26px;margin-bottom:6px">' + item.emoji + '</div>' +
+      '<div class="pos-menu-name">' + item.name + '</div>' +
+      '<div class="pos-menu-cat">' + item.cat + '</div>' +
+      '<div class="pos-menu-price">RM ' + item.price.toFixed(2) + '</div>' +
+    '</div>';
+  }).join("");
+  document.getElementById("posMenuGrid").innerHTML = html || '<div class="empty" style="grid-column:1/-1"><p>No items found</p></div>';
+}
+
+function filterMenuCat(cat, btn) {
+  posCurrentCat = cat;
+  document.querySelectorAll(".pos-cat-btn").forEach(function(b){ b.classList.remove("active"); });
+  btn.classList.add("active");
+  renderMenu();
+}
+
+function filterMenu() { renderMenu(); }
+
+function addToOrder(itemId) {
+  var item = posMenu.find(function(m){ return m.id === itemId; });
+  if (!item) return;
+  var existing = posOrder.find(function(o){ return o.id === itemId; });
+  if (existing) { existing.qty += 1; }
+  else { posOrder.push({ id: item.id, name: item.name, price: item.price, qty: 1, emoji: item.emoji }); }
+  updateOrderSummary();
+}
+
+function changeQty(itemId, delta) {
+  var idx = posOrder.findIndex(function(o){ return o.id === itemId; });
+  if (idx === -1) return;
+  posOrder[idx].qty += delta;
+  if (posOrder[idx].qty <= 0) posOrder.splice(idx, 1);
+  updateOrderSummary();
+}
+
+function updateOrderSummary() {
+  var table = document.getElementById("posTableSelect").value || posActiveTable || "No Table";
+  document.getElementById("posOrderTitle").textContent = table || "New Order";
+  if (!posOrder.length) {
+    document.getElementById("posOrderItems").innerHTML = '<div class="empty" style="padding:30px 0"><i class="ti ti-shopping-cart"></i><p>No items added yet</p></div>';
+    document.getElementById("posSubtotal").textContent = "RM 0.00";
+    document.getElementById("posTax").textContent = "RM 0.00";
+    document.getElementById("posTotal").textContent = "RM 0.00";
+    return;
+  }
+  var html = posOrder.map(function(item) {
+    var lineTotal = item.price * item.qty;
+    return '<div class="pos-order-item">' +
+      '<span style="font-size:18px">' + item.emoji + '</span>' +
+      '<div style="flex:1"><div style="font-size:13px;font-weight:600">' + item.name + '</div>' +
+      '<div style="font-size:12px;color:var(--text-light)">RM ' + item.price.toFixed(2) + ' each</div></div>' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+      '<button class="pos-qty-btn" onclick="changeQty(' + item.id + ',-1)">-</button>' +
+      '<span style="font-size:13px;font-weight:700;min-width:20px;text-align:center">' + item.qty + '</span>' +
+      '<button class="pos-qty-btn" onclick="changeQty(' + item.id + ',1)">+</button>' +
+      '</div>' +
+      '<div style="font-size:13px;font-weight:700;color:var(--navy);min-width:60px;text-align:right">RM ' + lineTotal.toFixed(2) + '</div>' +
+    '</div>';
+  }).join("");
+  document.getElementById("posOrderItems").innerHTML = html;
+  var subtotal = posOrder.reduce(function(s,i){ return s + (i.price * i.qty); }, 0);
+  var tax = subtotal * 0.06;
+  var total = subtotal + tax;
+  document.getElementById("posSubtotal").textContent = "RM " + subtotal.toFixed(2);
+  document.getElementById("posTax").textContent = "RM " + tax.toFixed(2);
+  document.getElementById("posTotal").textContent = "RM " + total.toFixed(2);
+}
+
+function selectPayment(method) {
+  posPaymentMethod = method;
+  document.querySelectorAll(".pos-pay-btn").forEach(function(b){ b.classList.remove("active"); });
+  document.getElementById("payBtn" + method).classList.add("active");
+}
+
+function clearOrder() {
+  posOrder = [];
+  updateOrderSummary();
+}
+
+function placeOrder() {
+  if (!posOrder.length) { alert("Please add items to the order."); return; }
+  var table = document.getElementById("posTableSelect").value;
+  if (!table) { alert("Please select a table."); return; }
+  var notes = document.getElementById("posOrderNotes").value;
+  var subtotal = posOrder.reduce(function(s,i){ return s + (i.price * i.qty); }, 0);
+  var tax = subtotal * 0.06;
+  var total = subtotal + tax;
+  var orderNum = "ORD-" + Date.now().toString().slice(-6);
+  var now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur" }));
+  var timeStr = String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2,"0");
+  var order = { id: orderNum, table: table, items: JSON.parse(JSON.stringify(posOrder)), subtotal: subtotal, tax: tax, total: total, payment: posPaymentMethod, notes: notes, time: timeStr, status: "Open", date: getTodayStr() };
+  var orders = JSON.parse(localStorage.getItem("dine_pos_orders") || "[]");
+  var existIdx = orders.findIndex(function(o){ return o.table === table && o.status === "Open"; });
+  if (existIdx !== -1) { orders[existIdx] = order; } else { orders.push(order); }
+  localStorage.setItem("dine_pos_orders", JSON.stringify(orders));
+  // Send KOT to kitchen via WhatsApp
+  sendKOT(order);
+  alert("Order placed!\n\n" + orderNum + "\n" + table + "\nTotal: RM " + total.toFixed(2) + "\n\nKitchen notification sent!");
+  clearOrder();
+  document.getElementById("posOrderNotes").value = "";
+  showPosView("tables");
+}
+
+async function sendKOT(order) {
+  try {
+    var kotMsg = "KOT - Kitchen Order\n\n";
+    kotMsg += "Order: " + order.id + "\n";
+    kotMsg += "Table: " + order.table + "\n";
+    kotMsg += "Time: " + order.time + "\n\n";
+    kotMsg += "Items:\n";
+    order.items.forEach(function(item, i) {
+      kotMsg += (i+1) + ". " + item.name + " x" + item.qty + "\n";
+    });
+    if (order.notes) kotMsg += "\nNotes: " + order.notes;
+    var res = await fetch(API + "/hub/pos/kot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+      body: JSON.stringify({ message: kotMsg, order: order })
+    });
+    console.log("KOT sent");
+  } catch(e) { console.error("KOT error:", e.message); }
+}
+
+function loadOrderHistory() {
+  var orders = JSON.parse(localStorage.getItem("dine_pos_orders") || "[]");
+  var today = getTodayStr();
+  var todayOrders = orders.filter(function(o){ return o.date === today; }).reverse();
+  var html = todayOrders.length ? todayOrders.map(function(o) {
+    var itemsSummary = o.items.map(function(i){ return i.name + " x" + i.qty; }).join(", ");
+    var sb = o.status === "Open" ? badge("Open","amber") : badge("Closed","green");
+    return '<tr><td style="font-weight:700">' + o.id + '</td><td>' + o.table + '</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + itemsSummary + '</td><td style="font-weight:700">RM ' + parseFloat(o.total||0).toFixed(2) + '</td><td>' + (o.payment||"-") + '</td><td>' + (o.time||"-") + '</td><td>' + sb + '</td></tr>';
+  }).join("") : '<tr><td colspan="7"><div class="empty"><p>No orders today</p></div></td></tr>';
+  document.getElementById("posOrderHistory").innerHTML = html;
 }
 </script>
 </body>
