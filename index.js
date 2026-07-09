@@ -621,6 +621,9 @@ app.get("/", function(req, res) {
   res.sendFile(__dirname + "/kapa-dine-hub.html");
 });
 app.get("/hub-ui", function(req, res) {
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
   res.sendFile(__dirname + "/kapa-dine-hub.html");
 });
 
