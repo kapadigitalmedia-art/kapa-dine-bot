@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAPA ONE Dine - Restaurant Hub</title>
+<link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+:root{
+  --primary:#D93025;--primary-dark:#B71C1C;--primary-light:#FFEBEE;
+  --navy:#1A0A00;--grey:#343C43;--light:#FFF8F6;
+  --white:#FFFFFF;--border:#E5E7EB;
+  --text:#1a1a1a;--text-light:#6B7280;--success:#0E9102;--warning:#F59E0B;
+  --shadow:0 2px 12px rgba(9,16,40,0.06);--radius:10px;--radius-lg:14px;
+  --transition:all 0.2s ease;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--light);font-size:14px}
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--navy) 0%,#3b0a00 50%,#1a0000 100%)}
+.login-box{background:#fff;border-radius:20px;padding:44px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.25)}
+.login-logo{text-align:center;font-size:26px;font-weight:800;color:var(--navy);margin-bottom:4px}
+.login-logo span{color:var(--primary)}
+.login-sub{text-align:center;font-size:13px;color:var(--text-light);margin-bottom:28px}
+.login-box label{display:block;font-size:12.5px;color:var(--grey);margin-bottom:6px;margin-top:16px;font-weight:600}
+.login-box input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;outline:none;transition:var(--transition)}
+.login-box input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(217,48,37,0.1)}
+.login-btn{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:14.5px;font-weight:700;cursor:pointer;margin-top:24px;transition:var(--transition)}
+.login-btn:hover{background:var(--primary-dark)}
+.login-error{color:var(--primary);font-size:12.5px;text-align:center;margin-top:12px;display:none;background:#FEF2F2;padding:10px;border-radius:8px}
+.login-footer{text-align:center;font-size:11.5px;color:#9CA3AF;margin-top:20px}
+/* APP */
+.app{display:none;min-height:100vh}
+.sidebar{width:248px;background:var(--navy);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:100}
+.sidebar-logo{padding:22px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sidebar-logo-icon{width:36px;height:36px;background:var(--primary);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.sidebar-logo-text{font-size:16px;font-weight:800;color:#fff;line-height:1.2}
+.sidebar-logo-text span{color:#ff8a80;font-size:11px;font-weight:400;display:block}
+.sidebar-company{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px}
+.sc-avatar{width:34px;height:34px;border-radius:8px;background:rgba(217,48,37,0.2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#ff8a80;flex-shrink:0}
+.sc-name{font-size:12.5px;font-weight:600;color:#fff}
+.sc-plan{font-size:10.5px;color:rgba(255,255,255,0.4)}
+.nav-scroll{flex:1;overflow-y:auto;padding:14px 12px}
+.nav-group-label{font-size:10.5px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.8px;padding:14px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;color:rgba(255,255,255,0.65);font-size:13.5px;font-weight:500;cursor:pointer;margin-bottom:2px;transition:var(--transition)}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:#fff}
+.nav-item.active{background:rgba(217,48,37,0.18);color:#ff8a80;font-weight:600}
+.nav-item .ic{width:18px;text-align:center;font-size:15px}
+.sidebar-bottom{padding:14px 12px;border-top:1px solid rgba(255,255,255,0.06)}
+.main{margin-left:248px;min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:#fff;border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:17px;font-weight:700;color:var(--navy)}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.user-menu{display:flex;align-items:center;gap:10px;cursor:pointer;padding:5px 10px 5px 5px;border-radius:9px}
+.user-menu:hover{background:var(--light)}
+.user-avatar{width:32px;height:32px;border-radius:8px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;color:var(--primary)}
+.user-name{font-size:13px;font-weight:600;color:var(--navy)}
+.user-role{font-size:11px;color:var(--text-light)}
+.content{flex:1;padding:28px}
+.page{display:none}
+.page.active{display:block}
+.page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+.page-hdr h2{font-size:20px;font-weight:700;color:var(--navy)}
+.page-hdr p{font-size:13px;color:var(--text-light);margin-top:2px}
+.btn{padding:9px 16px;border-radius:9px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:13px;color:var(--navy);font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:var(--transition)}
+.btn:hover{background:var(--light)}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-sm{padding:6px 12px;font-size:12px}
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px}
+.stat-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.stat-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.stat-icon.red{background:var(--primary-light);color:var(--primary)}
+.stat-icon.green{background:#E8F5E8;color:#0E9102}
+.stat-icon.blue{background:#E6F1FB;color:#185FA5}
+.stat-icon.amber{background:#FAEEDA;color:#854F0B}
+.stat-val{font-size:24px;font-weight:800;color:var(--navy)}
+.stat-label{font-size:12.5px;color:var(--text-light);margin-top:3px}
+.stat-change{font-size:11.5px;font-weight:600;margin-top:6px}
+.stat-change.up{color:var(--success)}
+.stat-change.down{color:var(--primary)}
+/* CARD */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:20px}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-hdr h3{font-size:15px;font-weight:700;color:var(--navy)}
+.card-hdr p{font-size:12px;color:var(--text-light);margin-top:2px}
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:11.5px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);background:#FAFAFA}
+td{padding:11px 12px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAF8}
+/* BADGE */
+.badge{padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:600;display:inline-block}
+.badge-green{background:#DCFCE7;color:#166534}
+.badge-red{background:#FEE2E2;color:#991B1B}
+.badge-amber{background:#FEF3C7;color:#92400E}
+.badge-blue{background:#DBEAFE;color:#1E40AF}
+.badge-grey{background:#F3F4F6;color:#374151}
+/* GRID */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+/* SALES CHART */
+.sales-bar-wrap{display:flex;align-items:flex-end;gap:8px;height:120px;padding-top:10px}
+.sales-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.sales-bar{width:100%;background:var(--primary);border-radius:5px 5px 0 0;min-height:4px;transition:var(--transition);opacity:0.85}
+.sales-bar:hover{opacity:1}
+.sales-bar-label{font-size:10px;color:var(--text-light)}
+.sales-bar-val{font-size:10px;font-weight:700;color:var(--navy)}
+/* INVENTORY */
+.inv-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.inv-item:last-child{border-bottom:none}
+.inv-name{font-size:13px;font-weight:600;color:var(--navy)}
+.inv-cat{font-size:11px;color:var(--text-light)}
+.inv-stock-bar{width:80px;height:6px;background:#F3F4F6;border-radius:99px;overflow:hidden;margin-top:4px}
+.inv-stock-fill{height:100%;border-radius:99px}
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filter-bar input,.filter-bar select{padding:8px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;outline:none;background:#fff}
+.filter-bar input:focus,.filter-bar select:focus{border-color:var(--primary)}
+/* LOADING */
+.loading{text-align:center;padding:40px;color:var(--text-light);font-size:13px}
+.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ATTENDANCE SUMMARY */
+.att-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.att-box{background:var(--light);border-radius:10px;padding:14px;text-align:center}
+.att-box-val{font-size:22px;font-weight:800;color:var(--navy)}
+.att-box-label{font-size:11.5px;color:var(--text-light);margin-top:2px}
+/* PURCHASE STATUS */
+.purchase-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.purchase-row:last-child{border-bottom:none}
+/* EMPTY STATE */
+.empty{text-align:center;padding:40px 20px;color:var(--text-light)}
+.empty i{font-size:40px;opacity:0.3;display:block;margin-bottom:12px}
+.empty p{font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="login-logo">KAPA<span>Dine</span></div>
+    <div class="login-sub">Restaurant Operations Hub</div>
+    <label>Email</label>
+    <input type="email" id="loginEmail" placeholder="you@restaurant.com" />
+    <label>Password</label>
+    <input type="password" id="loginPass" placeholder="••••••••" />
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-footer">Powered by KAPA Digital Media</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🍽️</div>
+      <div class="sidebar-logo-text">KAPA Dine<span>Restaurant Hub</span></div>
+    </div>
+    <div class="sidebar-company">
+      <div class="sc-avatar" id="scAvatar">R</div>
+      <div>
+        <div class="sc-name" id="scName">Restaurant</div>
+        <div class="sc-plan">Operations Dashboard</div>
+      </div>
+    </div>
+    <div class="nav-scroll">
+      <div class="nav-group-label">Main</div>
+      <div class="nav-item active" onclick="showPage('dashboard')"><span class="ic"><i class="ti ti-layout-dashboard"></i></span> Dashboard</div>
+      <div class="nav-item" onclick="showPage('sales')"><span class="ic"><i class="ti ti-cash-register"></i></span> Daily Sales</div>
+      <div class="nav-item" onclick="showPage('attendance')"><span class="ic"><i class="ti ti-clock"></i></span> Attendance</div>
+      <div class="nav-group-label">Operations</div>
+      <div class="nav-item" onclick="showPage('inventory')"><span class="ic"><i class="ti ti-box"></i></span> Inventory</div>
+      <div class="nav-item" onclick="showPage('purchases')"><span class="ic"><i class="ti ti-receipt"></i></span> Purchases</div>
+      <div class="nav-group-label">People</div>
+      <div class="nav-item" onclick="showPage('staff')"><span class="ic"><i class="ti ti-users"></i></span> Staff</div>
+      <div class="nav-item" onclick="showPage('leave')"><span class="ic"><i class="ti ti-calendar-off"></i></span> Leave</div>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="nav-item" onclick="doLogout()"><span class="ic"><i class="ti ti-logout"></i></span> Sign Out</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-right">
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div>
+            <div class="user-name" id="userName">User</div>
+            <div class="user-role" id="userRole">Owner</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD PAGE -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-hdr">
+          <div><h2>Dashboard</h2><p id="dashDate">Today</p></div>
+          <button class="btn btn-primary btn-sm" onclick="loadDashboard()"><i class="ti ti-refresh"></i> Refresh</button>
+        </div>
+        <div class="stats-row" id="dashStats">
+          <div class="stat-card"><div class="stat-top"><div><div class="stat-val" id="dTotalSales">RM 0</div><div class="stat-label">Today Sales</div></div><div class="stat-icon red"><i class="ti ti-cash"></i></div></div></div>
+          <div class="stat-card"><div class="stat-top"><div><div class="stat-val" id="dTotalBills">0</div><div class="stat-label">Total Bills</div></div><div class="stat-icon blue"><i class="ti ti-receipt"></i></div></div></div>
+          <div class="stat-card"><div class="stat-top"><div><div class="stat-val" id="dPresent">0</div><div class="stat-label">Staff Present</div></div><div class="stat-icon green"><i class="ti ti-users"></i></div></div></div>
+          <div class="stat-card"><div class="stat-top"><div><div class="stat-val" id="dLowStock">0</div><div class="stat-label">Low Stock Items</div></div><div class="stat-icon amber"><i class="ti ti-alert-triangle"></i></div></div></div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-hdr"><div><h3>Sales Breakdown</h3><p>Today payment methods</p></div></div>
+            <div id="salesBreakdown"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div><h3>Staff Status</h3><p>Today attendance</p></div></div>
+            <div id="dashStaffStatus"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div><h3>Low Stock Alert</h3><p>Items below minimum level</p></div><button class="btn btn-sm" onclick="showPage('inventory')">View All</button></div>
+          <div id="dashLowStock"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+        </div>
+      </div>
+
+      <!-- SALES PAGE -->
+      <div class="page" id="page-sales">
+        <div class="page-hdr">
+          <div><h2>Daily Sales</h2><p>Sales records and analytics</p></div>
+          <div style="display:flex;gap:8px">
+            <input type="date" id="salesDateFilter" onchange="loadSales()" class="btn btn-sm" />
+            <button class="btn btn-primary btn-sm" onclick="loadSales()"><i class="ti ti-refresh"></i> Refresh</button>
+          </div>
+        </div>
+        <div class="stats-row" id="salesStats" style="grid-template-columns:repeat(3,1fr)">
+          <div class="stat-card"><div class="stat-top"><div><div class="stat-val" id="sTotalSales">RM 0</div><div class="stat-label">Total Sales</div></div><div class="stat-icon red"><i class="ti ti-cash"></i></div></div></div>
+          <div class="stat-card"><div class="stat-top"><div><div class="stat-val" id="sTotalBills">0</div><div class="stat-label">Total Bills</div></div><div class="stat-icon blue"><i class="ti ti-receipt"></i></div></div></div>
+          <div class="stat-card"><div class="stat-top"><div><div class="stat-val" id="sAvgBill">RM 0</div><div class="stat-label">Avg per Bill</div></div><div class="stat-icon green"><i class="ti ti-chart-bar"></i></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Payment Breakdown</h3></div>
+          <div id="salesPaymentBreakdown"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Sales Records</h3></div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Date</th><th>Total Sales</th><th>Bills</th><th>Cash</th><th>Card</th><th>Online</th><th>GrabFood</th><th>Submitted By</th></tr></thead>
+            <tbody id="salesTable"><tr><td colspan="8" class="loading">Loading...</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATTENDANCE PAGE -->
+      <div class="page" id="page-attendance">
+        <div class="page-hdr">
+          <div><h2>Attendance</h2><p>Staff attendance records</p></div>
+          <div style="display:flex;gap:8px">
+            <input type="date" id="attDateFilter" onchange="loadAttendance()" class="btn btn-sm" />
+            <button class="btn btn-primary btn-sm" onclick="loadAttendance()"><i class="ti ti-refresh"></i> Refresh</button>
+          </div>
+        </div>
+        <div class="att-summary">
+          <div class="att-box"><div class="att-box-val" id="attPresent">0</div><div class="att-box-label">Present</div></div>
+          <div class="att-box"><div class="att-box-val" id="attAbsent">0</div><div class="att-box-label">Absent</div></div>
+          <div class="att-box"><div class="att-box-val" id="attLate">0</div><div class="att-box-label">Late</div></div>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Staff</th><th>Designation</th><th>Check In</th><th>Check Out</th><th>Status</th><th>Late (mins)</th></tr></thead>
+            <tbody id="attTable"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVENTORY PAGE -->
+      <div class="page" id="page-inventory">
+        <div class="page-hdr">
+          <div><h2>Inventory</h2><p>Stock levels and alerts</p></div>
+          <button class="btn btn-primary btn-sm" onclick="loadInventory()"><i class="ti ti-refresh"></i> Refresh</button>
+        </div>
+        <div class="filter-bar">
+          <input type="text" id="invSearch" placeholder="Search items..." oninput="filterInventory()" />
+          <select id="invCategory" onchange="filterInventory()">
+            <option value="">All Categories</option>
+            <option value="Vegetables">Vegetables</option>
+            <option value="Meat">Meat</option>
+            <option value="Seafood">Seafood</option>
+            <option value="Dairy">Dairy</option>
+            <option value="Dry Goods">Dry Goods</option>
+            <option value="Beverages">Beverages</option>
+            <option value="Other">Other</option>
+          </select>
+          <select id="invStatus" onchange="filterInventory()">
+            <option value="">All Status</option>
+            <option value="low">Low Stock</option>
+            <option value="ok">OK</option>
+          </select>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Item</th><th>Category</th><th>Current Stock</th><th>Minimum</th><th>Unit</th><th>Status</th></tr></thead>
+            <tbody id="invTable"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PURCHASES PAGE -->
+      <div class="page" id="page-purchases">
+        <div class="page-hdr">
+          <div><h2>Purchases</h2><p>Purchase records and approvals</p></div>
+          <div style="display:flex;gap:8px">
+            <input type="date" id="purDateFilter" onchange="loadPurchases()" class="btn btn-sm" />
+            <button class="btn btn-primary btn-sm" onclick="loadPurchases()"><i class="ti ti-refresh"></i> Refresh</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Date</th><th>Item</th><th>Supplier</th><th>Qty</th><th>Unit Price</th><th>Total</th><th>Submitted By</th><th>Status</th></tr></thead>
+            <tbody id="purTable"><tr><td colspan="8" class="loading">Loading...</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAFF PAGE -->
+      <div class="page" id="page-staff">
+        <div class="page-hdr">
+          <div><h2>Staff</h2><p>Team members</p></div>
+          <button class="btn btn-primary btn-sm" onclick="loadStaff()"><i class="ti ti-refresh"></i> Refresh</button>
+        </div>
+        <div class="filter-bar">
+          <input type="text" id="staffSearch" placeholder="Search staff..." oninput="filterStaff()" />
+          <select id="staffStatus" onchange="filterStaff()">
+            <option value="">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Name</th><th>Designation</th><th>WhatsApp</th><th>Shift Start</th><th>Status</th></tr></thead>
+            <tbody id="staffTable"><tr><td colspan="5" class="loading">Loading...</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEAVE PAGE -->
+      <div class="page" id="page-leave">
+        <div class="page-hdr">
+          <div><h2>Leave Requests</h2><p>Staff leave applications</p></div>
+          <button class="btn btn-primary btn-sm" onclick="loadLeave()"><i class="ti ti-refresh"></i> Refresh</button>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Staff</th><th>Leave Type</th><th>From</th><th>To</th><th>Reason</th><th>Status</th></tr></thead>
+            <tbody id="leaveTable"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+var API = "https://kapa-dine-bot.onrender.com";
+var token = null;
+var companyId = null;
+var allInventory = [];
+var allStaff = [];
+
+function getTodayStr() {
+  var d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+
+function formatZoho(d) {
+  if (!d) return "-";
+  var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var dt = new Date(d);
+  if (isNaN(dt)) return d;
+  return String(dt.getDate()).padStart(2,"0") + "-" + months[dt.getMonth()] + "-" + dt.getFullYear();
+}
+
+function fmtTime(t) {
+  if (!t) return "-";
+  var p = String(t).split(":");
+  var h = parseInt(p[0]||0), m = parseInt(p[1]||0);
+  var ap = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return String(h).padStart(2,"0") + ":" + String(m).padStart(2,"0") + " " + ap;
+}
+
+function fmtRM(v) {
+  return "RM " + parseFloat(v||0).toFixed(2);
+}
+
+function badge(text, type) {
+  return '<span class="badge badge-' + type + '">' + text + '</span>';
+}
+
+async function doLogin() {
+  var email = document.getElementById("loginEmail").value.trim();
+  var pass = document.getElementById("loginPass").value.trim();
+  if (!email || !pass) { showError("Please enter email and password."); return; }
+  try {
+    var res = await fetch(API + "/hub/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email, password: pass })
+    });
+    var data = await res.json();
+    if (data.success) {
+      token = data.token;
+      companyId = data.user.company_id;
+      document.getElementById("loginWrap").style.display = "none";
+      document.getElementById("app").style.display = "flex";
+      var initials = (data.user.full_name || "U").split(" ").map(function(w){ return w[0]; }).join("").substring(0,2).toUpperCase();
+      document.getElementById("userAvatar").textContent = initials;
+      document.getElementById("userName").textContent = data.user.full_name || "User";
+      document.getElementById("userRole").textContent = data.user.role || "Staff";
+      document.getElementById("scAvatar").textContent = initials[0] || "R";
+      document.getElementById("scName").textContent = data.company ? data.company.company_name : "Restaurant";
+      var today = new Date().toLocaleDateString("en-MY", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
+      document.getElementById("dashDate").textContent = today;
+      loadDashboard();
+    } else {
+      showError(data.error || "Invalid email or password.");
+    }
+  } catch(err) {
+    showError("Connection error. Please try again.");
+  }
+}
+
+function showError(msg) {
+  var el = document.getElementById("loginError");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+
+function doLogout() {
+  token = null; companyId = null;
+  document.getElementById("app").style.display = "none";
+  document.getElementById("loginWrap").style.display = "flex";
+}
+
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll(".nav-item").forEach(function(n){ n.classList.remove("active"); });
+  document.getElementById("page-" + name).classList.add("active");
+  var titles = { dashboard:"Dashboard", sales:"Daily Sales", attendance:"Attendance", inventory:"Inventory", purchases:"Purchases", staff:"Staff", leave:"Leave Requests" };
+  document.getElementById("topbarTitle").textContent = titles[name] || name;
+  event.currentTarget.classList.add("active");
+  if (name === "dashboard") loadDashboard();
+  if (name === "sales") { document.getElementById("salesDateFilter").value = getTodayStr(); loadSales(); }
+  if (name === "attendance") { document.getElementById("attDateFilter").value = getTodayStr(); loadAttendance(); }
+  if (name === "inventory") loadInventory();
+  if (name === "purchases") { document.getElementById("purDateFilter").value = getTodayStr(); loadPurchases(); }
+  if (name === "staff") loadStaff();
+  if (name === "leave") loadLeave();
+}
+
+async function zohoGet(report, params) {
+  try {
+    var url = API + "/hub/companies/" + companyId + "/" + report;
+    if (params) url += "?" + new URLSearchParams(params);
+    var res = await fetch(url, { headers: { "Authorization": "Bearer " + token } });
+    var data = await res.json();
+    return data.data || data || [];
+  } catch(e) { return []; }
+}
+
+async function loadDashboard() {
+  var today = formatZoho(new Date());
+
+  // Load sales
+  try {
+    var sales = await zohoGet("daily-sales", { date: today });
+    var s = Array.isArray(sales) ? sales[0] : sales;
+    document.getElementById("dTotalSales").textContent = s ? fmtRM(s.total_sales) : "RM 0";
+    document.getElementById("dTotalBills").textContent = s ? (s.total_bills || 0) : "0";
+
+    if (s) {
+      var breakdown = [
+        { label: "Cash", value: parseFloat(s.cash_amount||0), color: "#0E9102" },
+        { label: "Card", value: parseFloat(s.card_amount||0), color: "#185FA5" },
+        { label: "Online", value: parseFloat(s.online_amount||0), color: "#D93025" },
+        { label: "GrabFood", value: parseFloat(s.grabfood_amount||0), color: "#F59E0B" }
+      ];
+      var total = breakdown.reduce(function(a,b){ return a+b.value; }, 0) || 1;
+      var html = breakdown.map(function(b) {
+        var pct = Math.round((b.value/total)*100);
+        return '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12.5px;color:var(--text-light)">' + b.label + '</span><span style="font-size:13px;font-weight:700">' + fmtRM(b.value) + ' <span style="font-weight:400;color:var(--text-light)">(' + pct + '%)</span></span></div><div style="height:8px;background:#F3F4F6;border-radius:99px"><div style="height:100%;width:' + pct + '%;background:' + b.color + ';border-radius:99px"></div></div></div>';
+      }).join("");
+      document.getElementById("salesBreakdown").innerHTML = html;
+    } else {
+      document.getElementById("salesBreakdown").innerHTML = '<div class="empty"><i class="ti ti-cash"></i><p>No sales data for today</p></div>';
+    }
+  } catch(e) {
+    document.getElementById("salesBreakdown").innerHTML = '<div class="empty"><p>Unable to load sales</p></div>';
+  }
+
+  // Load attendance
+  try {
+    var att = await zohoGet("attendance", { date: today });
+    var records = Array.isArray(att) ? att : (att.data || []);
+    var present = records.filter(function(r){ return r.attendance_status === "Present" || r.attendance_status === "Late"; }).length;
+    var absent = records.filter(function(r){ return r.attendance_status === "Absent"; }).length;
+    document.getElementById("dPresent").textContent = present;
+    var attHtml = records.length ? records.slice(0,5).map(function(r) {
+      var statusBadge = r.attendance_status === "Present" ? badge("Present","green") : r.attendance_status === "Late" ? badge("Late","amber") : badge("Absent","red");
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;font-weight:600">' + (r.staff_name && r.staff_name.display_value ? r.staff_name.display_value : r.staff_name || "-") + '</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--text-light)">' + fmtTime(r.check_in_time) + '</span>' + statusBadge + '</div></div>';
+    }).join("") : '<div class="empty"><i class="ti ti-users"></i><p>No attendance records today</p></div>';
+    document.getElementById("dashStaffStatus").innerHTML = attHtml;
+  } catch(e) {}
+
+  // Load inventory
+  try {
+    var inv = await zohoGet("inventory");
+    var invArr = Array.isArray(inv) ? inv : (inv.data || []);
+    var low = invArr.filter(function(i){ return parseFloat(i.current_stock||0) <= parseFloat(i.minimum_stock||0); });
+    document.getElementById("dLowStock").textContent = low.length;
+    if (low.length) {
+      var lowHtml = low.slice(0,5).map(function(item) {
+        return '<div class="inv-item"><div><div class="inv-name">' + (item.item_name||"-") + '</div><div class="inv-cat">' + (item.category||"") + '</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--primary)">' + (item.current_stock||0) + ' ' + (item.unit||"") + '</div><div style="font-size:11px;color:var(--text-light)">Min: ' + (item.minimum_stock||0) + '</div></div></div>';
+      }).join("");
+      document.getElementById("dashLowStock").innerHTML = lowHtml;
+    } else {
+      document.getElementById("dashLowStock").innerHTML = '<div class="empty"><i class="ti ti-circle-check"></i><p>All items well stocked</p></div>';
+    }
+  } catch(e) {}
+}
+
+async function loadSales() {
+  var date = document.getElementById("salesDateFilter").value || getTodayStr();
+  var zohoDate = formatZoho(new Date(date));
+
+  try {
+    var sales = await zohoGet("daily-sales", { date: zohoDate });
+    var records = Array.isArray(sales) ? sales : (sales.data || []);
+    var s = records[0];
+
+    if (s) {
+      document.getElementById("sTotalSales").textContent = fmtRM(s.total_sales);
+      document.getElementById("sTotalBills").textContent = s.total_bills || 0;
+      var avg = s.total_bills > 0 ? parseFloat(s.total_sales||0) / parseInt(s.total_bills||1) : 0;
+      document.getElementById("sAvgBill").textContent = fmtRM(avg);
+
+      var breakdown = [
+        { label: "Cash", value: parseFloat(s.cash_amount||0), color: "#0E9102", icon: "ti-cash" },
+        { label: "Card / Banking", value: parseFloat(s.card_amount||0), color: "#185FA5", icon: "ti-credit-card" },
+        { label: "Online / QR", value: parseFloat(s.online_amount||0), color: "#D93025", icon: "ti-qrcode" },
+        { label: "GrabFood / Delivery", value: parseFloat(s.grabfood_amount||0), color: "#F59E0B", icon: "ti-bike" }
+      ];
+      var total = breakdown.reduce(function(a,b){ return a+b.value; }, 0) || 1;
+      var bHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">' + breakdown.map(function(b) {
+        var pct = Math.round((b.value/total)*100);
+        return '<div style="background:var(--light);border-radius:10px;padding:14px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="ti ' + b.icon + '" style="color:' + b.color + '"></i><span style="font-size:12px;color:var(--text-light)">' + b.label + '</span></div><div style="font-size:20px;font-weight:800;color:var(--navy)">' + fmtRM(b.value) + '</div><div style="font-size:11.5px;color:var(--text-light);margin-top:2px">' + pct + '% of total</div></div>';
+      }).join("") + '</div>';
+      document.getElementById("salesPaymentBreakdown").innerHTML = bHtml;
+    } else {
+      document.getElementById("sTotalSales").textContent = "RM 0";
+      document.getElementById("sTotalBills").textContent = "0";
+      document.getElementById("sAvgBill").textContent = "RM 0";
+      document.getElementById("salesPaymentBreakdown").innerHTML = '<div class="empty"><i class="ti ti-cash-register"></i><p>No sales data for this date</p></div>';
+    }
+
+    var tHtml = records.length ? records.map(function(r) {
+      return '<tr><td>' + (r.sale_date||"-") + '</td><td style="font-weight:700">' + fmtRM(r.total_sales) + '</td><td>' + (r.total_bills||0) + '</td><td>' + fmtRM(r.cash_amount) + '</td><td>' + fmtRM(r.card_amount) + '</td><td>' + fmtRM(r.online_amount) + '</td><td>' + fmtRM(r.grabfood_amount) + '</td><td>' + (r.submitted_by||"-") + '</td></tr>';
+    }).join("") : '<tr><td colspan="8"><div class="empty"><p>No sales records</p></div></td></tr>';
+    document.getElementById("salesTable").innerHTML = tHtml;
+  } catch(e) {
+    document.getElementById("salesTable").innerHTML = '<tr><td colspan="8">Error loading sales</td></tr>';
+  }
+}
+
+async function loadAttendance() {
+  var date = document.getElementById("attDateFilter").value || getTodayStr();
+  var zohoDate = formatZoho(new Date(date));
+  try {
+    var att = await zohoGet("attendance", { date: zohoDate });
+    var records = Array.isArray(att) ? att : (att.data || []);
+    var present = records.filter(function(r){ return r.attendance_status === "Present"; }).length;
+    var absent = records.filter(function(r){ return r.attendance_status === "Absent"; }).length;
+    var late = records.filter(function(r){ return r.attendance_status === "Late"; }).length;
+    document.getElementById("attPresent").textContent = present;
+    document.getElementById("attAbsent").textContent = absent;
+    document.getElementById("attLate").textContent = late;
+    var html = records.length ? records.map(function(r) {
+      var name = r.staff_name && r.staff_name.display_value ? r.staff_name.display_value : (r.staff_name || "-");
+      var st = r.attendance_status || "Unknown";
+      var sb = st === "Present" ? badge("Present","green") : st === "Late" ? badge("Late","amber") : st === "Absent" ? badge("Absent","red") : badge(st,"grey");
+      return '<tr><td style="font-weight:600">' + name + '</td><td>' + (r.designation||"-") + '</td><td>' + fmtTime(r.check_in_time) + '</td><td>' + fmtTime(r.check_out_time) + '</td><td>' + sb + '</td><td>' + (r.late_minutes||0) + '</td></tr>';
+    }).join("") : '<tr><td colspan="6"><div class="empty"><p>No attendance records</p></div></td></tr>';
+    document.getElementById("attTable").innerHTML = html;
+  } catch(e) {
+    document.getElementById("attTable").innerHTML = '<tr><td colspan="6">Error loading attendance</td></tr>';
+  }
+}
+
+async function loadInventory() {
+  try {
+    var inv = await zohoGet("inventory");
+    allInventory = Array.isArray(inv) ? inv : (inv.data || []);
+    renderInventory(allInventory);
+  } catch(e) {}
+}
+
+function renderInventory(items) {
+  var html = items.length ? items.map(function(item) {
+    var cur = parseFloat(item.current_stock||0);
+    var min = parseFloat(item.minimum_stock||1);
+    var pct = Math.min(100, Math.round((cur/min)*100));
+    var isLow = cur <= min;
+    var barColor = isLow ? "var(--primary)" : "var(--success)";
+    var sb = isLow ? badge("Low Stock","red") : badge("OK","green");
+    return '<tr><td style="font-weight:600">' + (item.item_name||"-") + '</td><td>' + (item.category||"-") + '</td><td><div style="display:flex;align-items:center;gap:8px"><span style="font-weight:700;color:' + (isLow?"var(--primary)":"var(--navy)") + '">' + cur + '</span><div class="inv-stock-bar"><div class="inv-stock-fill" style="width:' + pct + '%;background:' + barColor + '"></div></div></div></td><td>' + min + '</td><td>' + (item.unit||"-") + '</td><td>' + sb + '</td></tr>';
+  }).join("") : '<tr><td colspan="6"><div class="empty"><p>No inventory items</p></div></td></tr>';
+  document.getElementById("invTable").innerHTML = html;
+}
+
+function filterInventory() {
+  var search = document.getElementById("invSearch").value.toLowerCase();
+  var cat = document.getElementById("invCategory").value;
+  var status = document.getElementById("invStatus").value;
+  var filtered = allInventory.filter(function(item) {
+    var matchSearch = !search || (item.item_name||"").toLowerCase().includes(search);
+    var matchCat = !cat || (item.category||"") === cat;
+    var isLow = parseFloat(item.current_stock||0) <= parseFloat(item.minimum_stock||0);
+    var matchStatus = !status || (status === "low" ? isLow : !isLow);
+    return matchSearch && matchCat && matchStatus;
+  });
+  renderInventory(filtered);
+}
+
+async function loadPurchases() {
+  var date = document.getElementById("purDateFilter").value || getTodayStr();
+  var zohoDate = formatZoho(new Date(date));
+  try {
+    var pur = await zohoGet("purchases", { date: zohoDate });
+    var records = Array.isArray(pur) ? pur : (pur.data || []);
+    var html = records.length ? records.map(function(r) {
+      var st = r.status || "Pending";
+      var sb = st === "Approved" ? badge("Approved","green") : st === "Rejected" ? badge("Rejected","red") : badge("Pending","amber");
+      return '<tr><td>' + (r.purchase_date||"-") + '</td><td style="font-weight:600">' + (r.item_name||"-") + '</td><td>' + (r.supplier_name||"-") + '</td><td>' + (r.quantity||0) + ' ' + (r.unit||"") + '</td><td>' + fmtRM(r.unit_price) + '</td><td style="font-weight:700">' + fmtRM(r.total_amount) + '</td><td>' + (r.submitted_by||"-") + '</td><td>' + sb + '</td></tr>';
+    }).join("") : '<tr><td colspan="8"><div class="empty"><p>No purchase records</p></div></td></tr>';
+    document.getElementById("purTable").innerHTML = html;
+  } catch(e) {
+    document.getElementById("purTable").innerHTML = '<tr><td colspan="8">Error loading purchases</td></tr>';
+  }
+}
+
+async function loadStaff() {
+  try {
+    var staff = await zohoGet("zoho-employees");
+    allStaff = Array.isArray(staff) ? staff : (staff.data || []);
+    renderStaff(allStaff);
+  } catch(e) {}
+}
+
+function renderStaff(items) {
+  var html = items.length ? items.map(function(s) {
+    var name = s.staff_name && s.staff_name.display_value ? s.staff_name.display_value : (s.staff_name || "-");
+    var st = String(s.status||"").toLowerCase() === "active" ? badge("Active","green") : badge("Inactive","red");
+    return '<tr><td style="font-weight:600">' + name + '</td><td>' + (s.designation||"-") + '</td><td>' + (s.whatsapp_number||"-") + '</td><td>' + (s.shift_start||"08:00") + '</td><td>' + st + '</td></tr>';
+  }).join("") : '<tr><td colspan="5"><div class="empty"><p>No staff found</p></div></td></tr>';
+  document.getElementById("staffTable").innerHTML = html;
+}
+
+function filterStaff() {
+  var search = document.getElementById("staffSearch").value.toLowerCase();
+  var status = document.getElementById("staffStatus").value;
+  var filtered = allStaff.filter(function(s) {
+    var name = s.staff_name && s.staff_name.display_value ? s.staff_name.display_value : (s.staff_name || "");
+    var matchSearch = !search || name.toLowerCase().includes(search);
+    var matchStatus = !status || (s.status||"") === status;
+    return matchSearch && matchStatus;
+  });
+  renderStaff(filtered);
+}
+
+async function loadLeave() {
+  try {
+    var leave = await zohoGet("leave-requests");
+    var records = Array.isArray(leave) ? leave : (leave.data || []);
+    var html = records.length ? records.map(function(r) {
+      var staffName = r.staff_name && r.staff_name.display_value ? r.staff_name.display_value : (r.staff_name || "-");
+      var st = r.status || "Pending";
+      var sb = st === "Approved" ? badge("Approved","green") : st === "Rejected" ? badge("Rejected","red") : badge("Pending","amber");
+      return '<tr><td style="font-weight:600">' + staffName + '</td><td>' + (r.leave_type||"-") + '</td><td>' + (r.start_date||"-") + '</td><td>' + (r.end_date||"-") + '</td><td>' + (r.reason||"-") + '</td><td>' + sb + '</td></tr>';
+    }).join("") : '<tr><td colspan="6"><div class="empty"><p>No leave requests</p></div></td></tr>';
+    document.getElementById("leaveTable").innerHTML = html;
+  } catch(e) {
+    document.getElementById("leaveTable").innerHTML = '<tr><td colspan="6">Error loading leave requests</td></tr>';
+  }
+}
+
+// Set today's date on load
+document.getElementById("attDateFilter") && (document.getElementById("attDateFilter").value = getTodayStr());
+document.getElementById("salesDateFilter") && (document.getElementById("salesDateFilter").value = getTodayStr());
+document.getElementById("purDateFilter") && (document.getElementById("purDateFilter").value = getTodayStr());
+
+// Enter key login
+document.getElementById("loginPass").addEventListener("keydown", function(e){ if(e.key==="Enter") doLogin(); });
+</script>
+</body>
+</html>
