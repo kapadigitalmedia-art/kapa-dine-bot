@@ -617,6 +617,13 @@ app.get("/health", function(req, res) {
   res.json({ status: "ok", service: "KAPA ONE Dine", uptime: process.uptime() });
 });
 
+app.get("/", function(req, res) {
+  res.sendFile(__dirname + "/kapa-dine-hub.html");
+});
+app.get("/hub-ui", function(req, res) {
+  res.sendFile(__dirname + "/kapa-dine-hub.html");
+});
+
 // ── CRON: MORNING SHIFT REMINDER ───────────────────────────────────
 cron.schedule("0 0 * * 1-7", async function() {
   console.log("8:00 AM Dine shift reminder...");
