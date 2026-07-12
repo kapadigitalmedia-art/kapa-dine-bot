@@ -14,5 +14,5 @@ git add \
   package.json \
   package-lock.json
 git commit -m "$1"
-git push
+git push || { echo "Push failed. Commit is local only - fix auth and push manually."; exit 1; }
 echo "Deployed successfully!"
