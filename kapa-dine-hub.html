@@ -491,21 +491,12 @@ tr:hover td{background:#FDFAF9}
           <select class="pos-table-sel" id="posTableSel">
             <option value="">Select table</option>
             <option>Table 1</option><option>Table 2</option><option>Table 3</option>
-            <option>Table 4</option><option>Table 5</option><option>Table 6</option>
-            <option>Table 7</option><option>Table 8</option><option>Table 9</option>
-            <option>Table 10</option><option>Takeaway</option>
+            <option>Table 4</option><option>Table 5</option><option>Takeaway</option>
           </select>
           <input type="text" class="pos-search" id="posSearch" placeholder="Search menu..." oninput="renderPosMenu()" />
         </div>
         <div class="pos-cats" id="posCats">
           <div class="pos-cat active" onclick="setPosCategory('All',this)">All</div>
-          <div class="pos-cat" onclick="setPosCategory('Rice',this)">🍚 Rice</div>
-          <div class="pos-cat" onclick="setPosCategory('Noodles',this)">🍜 Noodles</div>
-          <div class="pos-cat" onclick="setPosCategory('Lauk',this)">🍛 Lauk</div>
-          <div class="pos-cat" onclick="setPosCategory('Seafood',this)">🦐 Seafood</div>
-          <div class="pos-cat" onclick="setPosCategory('Soup',this)">🥣 Soup</div>
-          <div class="pos-cat" onclick="setPosCategory('Drinks',this)">🥤 Drinks</div>
-          <div class="pos-cat" onclick="setPosCategory('Desserts',this)">🍮 Desserts</div>
         </div>
       </div>
 
@@ -567,24 +558,32 @@ var allInventory = [], allStaff = [];
 var posOrder = [], posPayMethod = "Cash", posCat = "All";
 
 var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-var MENU = [
-  {id:1,name:"Nasi Lemak",price:8,cat:"Rice",emoji:"🍚"},{id:2,name:"Nasi Goreng Kampung",price:9,cat:"Rice",emoji:"🍳"},
-  {id:3,name:"Nasi Goreng Seafood",price:12,cat:"Rice",emoji:"🦐"},{id:4,name:"Nasi Ayam",price:9.5,cat:"Rice",emoji:"🍗"},
-  {id:5,name:"Nasi Briyani Ayam",price:13,cat:"Rice",emoji:"🍛"},{id:6,name:"Nasi Briyani Kambing",price:16,cat:"Rice",emoji:"🥘"},
-  {id:7,name:"Mee Goreng Mamak",price:8.5,cat:"Noodles",emoji:"🍜"},{id:8,name:"Char Kuey Teow",price:9,cat:"Noodles",emoji:"🥡"},
-  {id:9,name:"Laksa",price:10,cat:"Noodles",emoji:"🍲"},{id:10,name:"Wantan Mee",price:8,cat:"Noodles",emoji:"🍥"},
-  {id:11,name:"Ayam Goreng",price:7,cat:"Lauk",emoji:"🍗"},{id:12,name:"Rendang Ayam",price:10,cat:"Lauk",emoji:"🥩"},
-  {id:13,name:"Daging Masak Merah",price:12,cat:"Lauk",emoji:"🥘"},{id:14,name:"Kangkung Belacan",price:7,cat:"Lauk",emoji:"🥬"},
-  {id:15,name:"Telur Dadar",price:4,cat:"Lauk",emoji:"🍳"},{id:16,name:"Ikan Bakar",price:18,cat:"Seafood",emoji:"🐟"},
-  {id:17,name:"Udang Masak Butter",price:22,cat:"Seafood",emoji:"🦐"},{id:18,name:"Ketam Masak Lemak",price:25,cat:"Seafood",emoji:"🦀"},
-  {id:19,name:"Sotong Goreng Tepung",price:16,cat:"Seafood",emoji:"🦑"},{id:20,name:"Sup Tulang",price:12,cat:"Soup",emoji:"🍖"},
-  {id:21,name:"Sup Ayam",price:9,cat:"Soup",emoji:"🥣"},{id:22,name:"Tom Yam Seafood",price:18,cat:"Soup",emoji:"🫕"},
-  {id:23,name:"Teh Tarik",price:3,cat:"Drinks",emoji:"☕"},{id:24,name:"Teh Ais",price:3.5,cat:"Drinks",emoji:"🧊"},
-  {id:25,name:"Kopi O",price:2.5,cat:"Drinks",emoji:"☕"},{id:26,name:"Milo Ais",price:4,cat:"Drinks",emoji:"🥤"},
-  {id:27,name:"Air Mineral",price:2,cat:"Drinks",emoji:"💧"},{id:28,name:"Jus Oren",price:5,cat:"Drinks",emoji:"🍊"},
-  {id:29,name:"Cendol",price:5,cat:"Desserts",emoji:"🍧"},{id:30,name:"ABC",price:5.5,cat:"Desserts",emoji:"🍨"},
-  {id:31,name:"Pisang Goreng",price:4,cat:"Desserts",emoji:"🍌"}
-];
+var MENU = [];
+var posMenuLoaded = false;
+var CATEGORY_EMOJI = {
+  "Rice": "🍚", "Noodles": "🍜", "Drinks": "🥤", "Desserts": "🍮",
+  "Grilled & BBQ": "🍗", "Sides": "🥗", "Seafood": "🦐", "Soup": "🥣"
+};
+function emojiForCategory(cat) { return CATEGORY_EMOJI[cat] || "🍽️"; }
+
+async function loadPosMenu() {
+  try {
+    var d = await apiFetch("/hub/dine/menu");
+    MENU = (d.data || []).map(function(m) {
+      return { id: m.id, name: m.item_name, price: parseFloat(m.price || 0), cat: m.category || "Other", emoji: emojiForCategory(m.category) };
+    });
+    posMenuLoaded = true;
+    renderPosCategories();
+  } catch (e) { console.error("loadPosMenu:", e.message); }
+}
+function renderPosCategories() {
+  var cats = Array.from(new Set(MENU.map(function(i){ return i.cat; })));
+  var html = '<div class="pos-cat ' + (posCat==="All"?"active":"") + '" onclick="setPosCategory(\'All\',this)">All</div>';
+  html += cats.map(function(c) {
+    return '<div class="pos-cat ' + (posCat===c?"active":"") + '" onclick="setPosCategory(\'' + c + '\',this)">' + emojiForCategory(c) + ' ' + c + '</div>';
+  }).join("");
+  document.getElementById("posCats").innerHTML = html;
+}
 
 function today() {
   var d = new Date();
@@ -845,15 +844,19 @@ async function loadLeave() {
 }
 
 // ── POS ──────────────────────────────────────────────────────────
-function openPOS() { document.getElementById("posOverlay").classList.add("open"); renderPosMenu(); }
+async function openPOS() {
+  document.getElementById("posOverlay").classList.add("open");
+  if (!posMenuLoaded) await loadPosMenu();
+  renderPosMenu();
+}
 function closePOS() { document.getElementById("posOverlay").classList.remove("open"); }
-function switchPosTab(tab, el) {
+async function switchPosTab(tab, el) {
   document.querySelectorAll(".pos-tab").forEach(t=>t.classList.remove("active"));
   if (el) el.classList.add("active");
   document.querySelectorAll(".pos-view").forEach(v=>v.classList.remove("active"));
   if (tab==="order") { document.getElementById("posViewOrder").classList.add("active"); renderPosMenu(); }
-  if (tab==="tables") { document.getElementById("posViewTables").classList.add("active"); renderPosTables(); }
-  if (tab==="history") { document.getElementById("posViewHistory").classList.add("active"); renderPosHistory(); }
+  if (tab==="tables") { document.getElementById("posViewTables").classList.add("active"); await renderPosTables(); }
+  if (tab==="history") { document.getElementById("posViewHistory").classList.add("active"); await renderPosHistory(); }
 }
 function setPosCategory(cat, el) {
   posCat = cat;
@@ -904,53 +907,69 @@ function selectPosPayment(method, el) {
   document.querySelectorAll(".pos-pay-btn").forEach(b=>b.classList.remove("active"));
   if (el) el.classList.add("active");
 }
-function placePosOrder() {
+async function placePosOrder() {
   if (!posOrder.length) { alert("Add items to the order first."); return; }
   var tbl = document.getElementById("posTableSel").value;
   if (!tbl) { alert("Select a table first."); return; }
   var sub = posOrder.reduce((s,i)=>s+(i.price*i.qty),0);
   var tax = sub*0.06;
   var total = sub+tax;
-  var num = "ORD-" + Date.now().toString().slice(-6);
-  var now = new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Kuala_Lumpur"}));
-  var timeStr = String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
-  var order = {id:num,table:tbl,items:JSON.parse(JSON.stringify(posOrder)),subtotal:sub,tax:tax,total:total,payment:posPayMethod,notes:document.getElementById("posNotes").value,time:timeStr,date:today(),status:"Open"};
-  var orders = JSON.parse(localStorage.getItem("dine_pos_orders")||"[]");
-  orders.push(order);
-  localStorage.setItem("dine_pos_orders", JSON.stringify(orders));
-  var kotMsg = "KOT - " + num + "\nTable: " + tbl + "\nTime: " + timeStr + "\n\n";
-  order.items.forEach((i,idx)=>{ kotMsg += (idx+1)+". "+i.name+" x"+i.qty+"\n"; });
-  if (order.notes) kotMsg += "\nNotes: " + order.notes;
-  fetch(API + "/hub/pos/kot", {method:"POST", headers:{"Content-Type":"application/json","Authorization":"Bearer "+token}, body:JSON.stringify({message:kotMsg,order:order})}).catch(()=>{});
-  alert("Order placed!\n\n" + num + "\n" + tbl + "\nTotal: RM " + total.toFixed(2) + "\n\nKitchen notified!");
-  clearPosOrder();
-  document.getElementById("posNotes").value = "";
-  document.getElementById("posTableSel").value = "";
-}
-function renderPosTables() {
-  var orders = JSON.parse(localStorage.getItem("dine_pos_orders")||"[]");
-  var html = "";
-  for (var i=1; i<=10; i++) {
-    var t = "Table " + i;
-    var occ = orders.find(o=>o.table===t&&o.status==="Open");
-    html += '<div class="pos-table-card '+(occ?"occupied":"available")+'" onclick="selectPosTable(\''+t+'\')">';
-    html += '<div class="pos-table-num">'+i+'</div>';
-    html += '<div class="pos-table-status-text" style="color:'+(occ?"#ff8a80":"#81C784")+'">'+(occ?"Occupied":"Available")+'</div>';
-    if (occ) html += '<div class="pos-table-total">'+fmtRM(occ.total)+'</div>';
-    html += '</div>';
+  var placeBtn = document.getElementById("posPlaceBtn");
+  placeBtn.disabled = true;
+  try {
+    var d = await apiFetch("/hub/pos/kot", { method: "POST", body: JSON.stringify({
+      order: {
+        table: tbl,
+        items: posOrder.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
+        subtotal: sub, tax: tax, total: total,
+        payment: posPayMethod,
+        notes: document.getElementById("posNotes").value
+      }
+    })});
+    if (!d.success) { alert(d.error || "Could not place order."); return; }
+    alert("Order placed!\n\nOrder #" + d.order_id + "\n" + tbl + "\nTotal: RM " + total.toFixed(2) + "\n\nKitchen notified!");
+    clearPosOrder();
+    document.getElementById("posNotes").value = "";
+    document.getElementById("posTableSel").value = "";
+  } catch (e) {
+    alert("Connection error placing order: " + e.message);
+  } finally {
+    placeBtn.disabled = false;
   }
-  html += '<div class="pos-table-card available" onclick="selectPosTable(\'Takeaway\')"><div class="pos-table-num" style="font-size:22px">🥡</div><div class="pos-table-status-text" style="color:#81C784">Takeaway</div></div>';
-  document.getElementById("posTablesGrid").innerHTML = html;
+}
+async function renderPosTables() {
+  document.getElementById("posTablesGrid").innerHTML = '<div class="loading-box"><div class="spinner"></div></div>';
+  try {
+    var d = await apiFetch("/hub/dine/tables");
+    var tables = d.data || [];
+    var html = tables.map(function(t) {
+      var occ = t.status === "Occupied";
+      var num = t.table_number.replace(/[^0-9]/g, "");
+      return '<div class="pos-table-card '+(occ?"occupied":"available")+'" onclick="selectPosTable(\''+t.table_number+'\')">' +
+        '<div class="pos-table-num">'+num+'</div>' +
+        '<div class="pos-table-status-text" style="color:'+(occ?"#ff8a80":"#81C784")+'">'+t.status+'</div>' +
+        (occ ? '<div class="pos-table-total">'+fmtRM(t.total)+'</div>' : '') +
+        '</div>';
+    }).join("");
+    html += '<div class="pos-table-card available" onclick="selectPosTable(\'Takeaway\')"><div class="pos-table-num" style="font-size:22px">🥡</div><div class="pos-table-status-text" style="color:#81C784">Takeaway</div></div>';
+    document.getElementById("posTablesGrid").innerHTML = html;
+  } catch (e) {
+    document.getElementById("posTablesGrid").innerHTML = '<div class="pos-empty"><p>Could not load tables</p></div>';
+  }
 }
 function selectPosTable(t) {
   document.getElementById("posTableSel").value = t;
   switchPosTab("order", document.querySelector(".pos-tab"));
 }
-function renderPosHistory() {
-  var orders = JSON.parse(localStorage.getItem("dine_pos_orders")||"[]");
-  var t = today();
-  var todays = orders.filter(o=>o.date===t).reverse();
-  document.getElementById("posHistoryBody").innerHTML = todays.length ? todays.map(o=>'<tr><td style="font-weight:700;color:#ff8a80">'+o.id+'</td><td>'+o.table+'</td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+o.items.map(i=>i.name+" x"+i.qty).join(", ")+'</td><td style="font-weight:700;color:#ff8a80">'+fmtRM(o.total)+'</td><td>'+o.payment+'</td><td>'+o.time+'</td><td><span style="background:rgba(217,48,37,0.15);color:#ff8a80;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:700">'+o.status+'</span></td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:20px;color:rgba(255,255,255,0.3)">No orders today</td></tr>';
+async function renderPosHistory() {
+  document.getElementById("posHistoryBody").innerHTML = '<tr><td colspan="7"><div class="loading-box"><div class="spinner"></div></div></td></tr>';
+  try {
+    var d = await apiFetch("/hub/dine/orders");
+    var orders = d.data || [];
+    document.getElementById("posHistoryBody").innerHTML = orders.length ? orders.map(o=>'<tr><td style="font-weight:700;color:#ff8a80">#'+o.id+'</td><td>'+(o.table_number||"-")+'</td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(o.items||[]).map(i=>i.name+" x"+i.qty).join(", ")+'</td><td style="font-weight:700;color:#ff8a80">'+fmtRM(o.total)+'</td><td>'+(o.payment_method||"-")+'</td><td>'+new Date(o.created_at).toLocaleTimeString("en-MY",{hour:"2-digit",minute:"2-digit"})+'</td><td><span style="background:rgba(217,48,37,0.15);color:#ff8a80;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:700">'+o.status+'</span></td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:20px;color:rgba(255,255,255,0.3)">No orders today</td></tr>';
+  } catch (e) {
+    document.getElementById("posHistoryBody").innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:rgba(255,255,255,0.3)">Could not load orders</td></tr>';
+  }
 }
 
 // Auto-restore session
