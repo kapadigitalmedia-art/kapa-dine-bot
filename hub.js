@@ -108,6 +108,15 @@ router.post("/login", async function(req, res) {
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
+router.get("/login/verify", authMiddleware, async function(req, res) {
+  try {
+    var user = await User.findOne({ _id: req.user.userId, is_active: true });
+    if (!user) return res.status(401).json({ error: "Invalid token" });
+    var company = await Company.findById(user.company_id);
+    res.json({ success: true, user: { _id: user._id, full_name: user.full_name, email: user.email, role: user.role, company_id: user.company_id }, company: company });
+  } catch(err) { res.status(401).json({ error: "Invalid token" }); }
+});
+
 router.post("/companies", async function(req, res) {
   try {
     var company = new Company(req.body);
