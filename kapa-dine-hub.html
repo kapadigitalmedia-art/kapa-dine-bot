@@ -160,87 +160,87 @@ tr:hover td{background:#FDFAF9}
 /* ── POS OVERLAY ── */
 .pos-overlay{display:none;position:fixed;inset:0;background:#fff;z-index:1000;flex-direction:column}
 .pos-overlay.open{display:flex}
-.pos-topbar{height:56px;background:#fff;border-bottom:1px solid var(--border);
+.pos-topbar{height:56px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0}
 .pos-title{font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-0.3px}
 .pos-close-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:var(--t)}
-.pos-close-btn:hover{background:var(--border)}.pos-close-btn:hover{background:var(--border)}
+.pos-close-btn:hover{background:var(--border)}
 .pos-body{flex:1;display:grid;grid-template-columns:1fr 370px;overflow:hidden;background:#fff}
 .pos-left{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;background:#fff}
 .pos-menu-header{padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0;background:#fff}
 .pos-table-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.pos-table-sel{padding:8px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:13px;font-weight:600;outline:none;background:rgba(255,255,255,0.06);color:#fff;cursor:pointer}
-.pos-table-sel option{background:#1C1009;color:#fff}
-.pos-search{flex:1;padding:8px 14px;border:1px solid rgba(255,255,255,0.12);border-radius:8px;font-size:13px;outline:none;background:rgba(255,255,255,0.06);color:#fff}
-.pos-search::placeholder{color:rgba(255,255,255,0.3)}
-.pos-search:focus{border-color:rgba(217,48,37,0.6);background:rgba(255,255,255,0.08)}
+.pos-table-sel{padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;outline:none;background:var(--surface);color:var(--text);cursor:pointer}
+.pos-table-sel option{background:#fff;color:var(--text)}
+.pos-search{flex:1;padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;outline:none;background:var(--surface);color:var(--text)}
+.pos-search::placeholder{color:var(--text-3)}
+.pos-search:focus{border-color:var(--red);background:#fff}
 .pos-cats{display:flex;gap:7px;flex-wrap:wrap}
-.pos-cat{padding:5px 12px;border-radius:99px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.55);font-size:12px;font-weight:600;cursor:pointer;transition:var(--t);white-space:nowrap}
+.pos-cat{padding:5px 12px;border-radius:99px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:12px;font-weight:600;cursor:pointer;transition:var(--t);white-space:nowrap}
 .pos-cat.active{background:var(--red);border-color:var(--red);color:#fff}
-.pos-cat:hover{background:rgba(255,255,255,0.08);color:#fff}
+.pos-cat:hover{background:var(--border);color:var(--text)}
 .pos-menu-grid{flex:1;overflow-y:auto;padding:16px 18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:start}
-.pos-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px 12px;cursor:pointer;transition:var(--t);text-align:center}
-.pos-item:hover{background:rgba(255,255,255,0.08);border-color:rgba(217,48,37,0.4);transform:translateY(-1px)}
+.pos-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 12px;cursor:pointer;transition:var(--t);text-align:center}
+.pos-item:hover{background:var(--red-light);border-color:var(--red);transform:translateY(-1px)}
 .pos-item:active{transform:scale(0.97)}
 .pos-item-emoji{font-size:24px;margin-bottom:6px}
-.pos-item-name{font-size:12.5px;font-weight:600;color:#fff;margin-bottom:3px;line-height:1.3}
-.pos-item-cat{font-size:10.5px;color:rgba(255,255,255,0.35);margin-bottom:5px}
-.pos-item-price{font-size:13.5px;font-weight:800;color:#ff8a80}
-.pos-right{display:flex;flex-direction:column;background:rgba(255,255,255,0.02)}
-.pos-order-hdr{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.pos-order-title{font-size:14px;font-weight:700;color:#fff}
-.pos-clear-btn{font-size:12px;color:rgba(255,255,255,0.4);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 8px;border-radius:6px;transition:var(--t)}
-.pos-clear-btn:hover{color:#ff8a80;background:rgba(217,48,37,0.1)}
+.pos-item-name{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:3px;line-height:1.3}
+.pos-item-cat{font-size:10.5px;color:var(--text-3);margin-bottom:5px}
+.pos-item-price{font-size:13.5px;font-weight:800;color:var(--red)}
+.pos-right{display:flex;flex-direction:column;background:var(--surface)}
+.pos-order-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.pos-order-title{font-size:14px;font-weight:700;color:var(--navy)}
+.pos-clear-btn{font-size:12px;color:var(--text-2);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 8px;border-radius:6px;transition:var(--t)}
+.pos-clear-btn:hover{color:var(--red);background:var(--red-light)}
 .pos-order-items{flex:1;overflow-y:auto;padding:10px 16px}
-.pos-order-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.pos-order-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
 .pos-order-row:last-child{border-bottom:none}
 .pos-order-emoji{font-size:18px;flex-shrink:0}
 .pos-order-info{flex:1;min-width:0}
-.pos-order-name{font-size:12.5px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pos-order-price{font-size:11.5px;color:rgba(255,255,255,0.4)}
+.pos-order-name{font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pos-order-price{font-size:11.5px;color:var(--text-2)}
 .pos-qty-controls{display:flex;align-items:center;gap:7px;flex-shrink:0}
-.pos-qty-btn{width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#fff;cursor:pointer;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:var(--t)}
-.pos-qty-btn:hover{background:var(--red);border-color:var(--red)}
-.pos-qty{font-size:13px;font-weight:700;color:#fff;min-width:18px;text-align:center}
-.pos-line-total{font-size:13px;font-weight:700;color:#ff8a80;min-width:52px;text-align:right;flex-shrink:0}
-.pos-order-footer{padding:16px 18px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0}
+.pos-qty-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:#fff;color:var(--text);cursor:pointer;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:var(--t)}
+.pos-qty-btn:hover{background:var(--red);border-color:var(--red);color:#fff}
+.pos-qty{font-size:13px;font-weight:700;color:var(--text);min-width:18px;text-align:center}
+.pos-line-total{font-size:13px;font-weight:700;color:var(--red);min-width:52px;text-align:right;flex-shrink:0}
+.pos-order-footer{padding:16px 18px;border-top:1px solid var(--border);flex-shrink:0}
 .pos-totals{margin-bottom:14px}
-.pos-total-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:rgba(255,255,255,0.5);margin-bottom:5px}
-.pos-total-row.grand{font-size:18px;font-weight:800;color:#fff;border-top:1px solid rgba(255,255,255,0.08);padding-top:10px;margin-top:8px;letter-spacing:-0.4px}
-.pos-total-row.grand span:last-child{color:#ff8a80}
+.pos-total-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--text-2);margin-bottom:5px}
+.pos-total-row.grand{font-size:18px;font-weight:800;color:var(--navy);border-top:1px solid var(--border);padding-top:10px;margin-top:8px;letter-spacing:-0.4px}
+.pos-total-row.grand span:last-child{color:var(--red)}
 .pos-pay-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}
-.pos-pay-btn{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);font-size:12px;font-weight:600;cursor:pointer;transition:var(--t);text-align:center}
-.pos-pay-btn.active{background:rgba(217,48,37,0.2);border-color:rgba(217,48,37,0.5);color:#ff8a80}
-.pos-pay-btn:hover{background:rgba(255,255,255,0.08)}
-.pos-notes{width:100%;padding:8px 12px;border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-size:12.5px;outline:none;background:rgba(255,255,255,0.04);color:#fff;margin-bottom:12px;resize:none}
-.pos-notes::placeholder{color:rgba(255,255,255,0.25)}
+.pos-pay-btn{padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:12px;font-weight:600;cursor:pointer;transition:var(--t);text-align:center}
+.pos-pay-btn.active{background:var(--red-light);border-color:var(--red);color:var(--red)}
+.pos-pay-btn:hover{background:var(--border)}
+.pos-notes{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;outline:none;background:#fff;color:var(--text);margin-bottom:12px;resize:none}
+.pos-notes::placeholder{color:var(--text-3)}
 .pos-place-btn{width:100%;padding:13px;background:var(--red);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:var(--t);display:flex;align-items:center;justify-content:center;gap:8px}
 .pos-place-btn:hover{background:var(--red-dark);transform:translateY(-1px);box-shadow:0 4px 16px rgba(217,48,37,0.35)}
 .pos-place-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
-.pos-empty{text-align:center;padding:30px 0;color:rgba(255,255,255,0.25)}
+.pos-empty{text-align:center;padding:30px 0;color:var(--text-3)}
 .pos-empty i{font-size:36px;display:block;margin-bottom:10px}
 .pos-empty p{font-size:12.5px}
-.pos-tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,0.06);padding:0 18px;flex-shrink:0}
-.pos-tab{padding:10px 14px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,0.4);cursor:pointer;border-bottom:2px solid transparent;transition:var(--t);white-space:nowrap}
-.pos-tab.active{color:#ff8a80;border-bottom-color:var(--red)}
-.pos-tab:hover{color:rgba(255,255,255,0.7)}
+.pos-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 18px;flex-shrink:0}
+.pos-tab{padding:10px 14px;font-size:12.5px;font-weight:600;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:var(--t);white-space:nowrap}
+.pos-tab.active{color:var(--red);border-bottom-color:var(--red)}
+.pos-tab:hover{color:var(--text)}
 .pos-view{display:none;flex:1;overflow:hidden;flex-direction:column}
 .pos-view.active{display:flex}
 
 /* TABLES GRID */
 .pos-tables-view{padding:16px 18px;overflow-y:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-content:start}
-.pos-table-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:var(--t)}
-.pos-table-card:hover{background:rgba(255,255,255,0.08);transform:translateY(-2px)}
-.pos-table-card.occupied{border-color:rgba(217,48,37,0.4);background:rgba(217,48,37,0.06)}
-.pos-table-card.available{border-color:rgba(46,125,50,0.3);background:rgba(46,125,50,0.04)}
-.pos-table-num{font-size:26px;font-weight:800;color:#fff;margin-bottom:4px}
+.pos-table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:var(--t)}
+.pos-table-card:hover{background:var(--red-light);transform:translateY(-2px)}
+.pos-table-card.occupied{border-color:var(--red);background:var(--red-light)}
+.pos-table-card.available{border-color:rgba(46,125,50,0.3);background:rgba(46,125,50,0.06)}
+.pos-table-num{font-size:26px;font-weight:800;color:var(--navy);margin-bottom:4px}
 .pos-table-status-text{font-size:11.5px;font-weight:600}
-.pos-table-total{font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px}
+.pos-table-total{font-size:12px;color:var(--text-2);margin-top:3px}
 
 /* HISTORY TABLE */
 .pos-history-wrap{flex:1;overflow-y:auto;padding:16px 18px}
 .pos-history-table{width:100%;border-collapse:collapse}
-.pos-history-table th{font-size:10.5px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.6px;padding:8px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.06)}
-.pos-history-table td{padding:10px 12px;font-size:12.5px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.75)}
+.pos-history-table th{font-size:10.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.pos-history-table td{padding:10px 12px;font-size:12.5px;border-bottom:1px solid var(--border);color:var(--text)}
 
 /* ── PAYMENT BREAKDOWN ── */
 .pay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -515,7 +515,7 @@ tr:hover td{background:#FDFAF9}
         <div class="pos-history-wrap">
           <table class="pos-history-table">
             <thead><tr><th>Order #</th><th>Table</th><th>Items</th><th>Total</th><th>Payment</th><th>Time</th><th>Status</th></tr></thead>
-            <tbody id="posHistoryBody"><tr><td colspan="7" style="text-align:center;padding:20px;color:rgba(255,255,255,0.3)">No orders yet</td></tr></tbody>
+            <tbody id="posHistoryBody"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-3)">No orders yet</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -947,7 +947,7 @@ async function renderPosTables() {
       var num = t.table_number.replace(/[^0-9]/g, "");
       return '<div class="pos-table-card '+(occ?"occupied":"available")+'" onclick="selectPosTable(\''+t.table_number+'\')">' +
         '<div class="pos-table-num">'+num+'</div>' +
-        '<div class="pos-table-status-text" style="color:'+(occ?"#ff8a80":"#81C784")+'">'+t.status+'</div>' +
+        '<div class="pos-table-status-text" style="color:'+(occ?"var(--red)":"var(--success)")+'">'+t.status+'</div>' +
         (occ ? '<div class="pos-table-total">'+fmtRM(t.total)+'</div>' : '') +
         '</div>';
     }).join("");
@@ -966,9 +966,9 @@ async function renderPosHistory() {
   try {
     var d = await apiFetch("/hub/dine/orders");
     var orders = d.data || [];
-    document.getElementById("posHistoryBody").innerHTML = orders.length ? orders.map(o=>'<tr><td style="font-weight:700;color:#ff8a80">#'+o.id+'</td><td>'+(o.table_number||"-")+'</td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(o.items||[]).map(i=>i.name+" x"+i.qty).join(", ")+'</td><td style="font-weight:700;color:#ff8a80">'+fmtRM(o.total)+'</td><td>'+(o.payment_method||"-")+'</td><td>'+new Date(o.created_at).toLocaleTimeString("en-MY",{hour:"2-digit",minute:"2-digit"})+'</td><td><span style="background:rgba(217,48,37,0.15);color:#ff8a80;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:700">'+o.status+'</span></td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:20px;color:rgba(255,255,255,0.3)">No orders today</td></tr>';
+    document.getElementById("posHistoryBody").innerHTML = orders.length ? orders.map(o=>'<tr><td style="font-weight:700;color:var(--red)">#'+o.id+'</td><td>'+(o.table_number||"-")+'</td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(o.items||[]).map(i=>i.name+" x"+i.qty).join(", ")+'</td><td style="font-weight:700;color:var(--red)">'+fmtRM(o.total)+'</td><td>'+(o.payment_method||"-")+'</td><td>'+new Date(o.created_at).toLocaleTimeString("en-MY",{hour:"2-digit",minute:"2-digit"})+'</td><td><span style="background:rgba(217,48,37,0.15);color:var(--red);padding:3px 8px;border-radius:99px;font-size:11px;font-weight:700">'+o.status+'</span></td></tr>').join("") : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-3)">No orders today</td></tr>';
   } catch (e) {
-    document.getElementById("posHistoryBody").innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:rgba(255,255,255,0.3)">Could not load orders</td></tr>';
+    document.getElementById("posHistoryBody").innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-3)">Could not load orders</td></tr>';
   }
 }
 
