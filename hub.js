@@ -8,11 +8,7 @@ const jwt = require("jsonwebtoken");
 const DB = require("./db");
 require("dotenv").config();
 
-const ZOHO_CREATOR = "https://creatorapp.zoho.in/api/v2";
-const ZOHO_OWNER   = process.env.ZOHO_OWNER;
-const ZOHO_APP     = process.env.ZOHO_APP;
 const JWT_SECRET   = process.env.JWT_SECRET || "kapa_dine_secret_2026";
-const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 // This bot instance serves Ritz Restaurant only (Plan 2 - dedicated number);
 // hardcode its MySQL company_id until this bot supports multiple tenants.
@@ -42,25 +38,6 @@ const companySchema = new mongoose.Schema({
 });
 const Company = mongoose.models.DineCompany || mongoose.model("DineCompany", companySchema);
 
-// ── ZOHO TOKEN ─────────────────────────────────────────────────────
-var zohoToken = null;
-var zohoTokenTime = 0;
-async function getZohoToken() {
-  if (zohoToken && Date.now() < zohoTokenTime) return zohoToken;
-  var r = await axios.post("https://accounts.zoho.in/oauth/v2/token", null, {
-    params: {
-      refresh_token: process.env.ZOHO_REFRESH_TOKEN,
-      client_id:     process.env.ZOHO_CLIENT_ID,
-      client_secret: process.env.ZOHO_CLIENT_SECRET,
-      grant_type:    "refresh_token"
-    }
-  });
-  zohoToken = r.data.access_token;
-  zohoTokenTime = Date.now() + (55 * 60 * 1000);
-  console.log("Hub Zoho token refreshed");
-  return zohoToken;
-}
-
 // ── AUTH MIDDLEWARE ─────────────────────────────────────────────────
 function authMiddleware(req, res, next) {
   var auth = req.headers.authorization || "";
@@ -76,18 +53,9 @@ function authMiddleware(req, res, next) {
 }
 
 // ── HELPERS ────────────────────────────────────────────────────────
-function formatZohoDate(d) {
-  var dt = new Date(d);
-  return String(dt.getDate()).padStart(2,"0") + "-" + MONTHS[dt.getMonth()] + "-" + dt.getFullYear();
-}
-
-async function zohoGet(report, params) {
-  var token = await getZohoToken();
-  var res = await axios.get(ZOHO_CREATOR + "/" + ZOHO_OWNER + "/" + ZOHO_APP + "/report/" + report, {
-    headers: { Authorization: "Zoho-oauthtoken " + token },
-    params: params || {}
-  });
-  return res.data.data || [];
+function todayDate() {
+  var now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur" }));
+  return now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
 }
 
 // ── AUTH ROUTES ────────────────────────────────────────────────────
@@ -138,70 +106,52 @@ router.post("/companies/:company_id/users", async function(req, res) {
 // ── STAFF / EMPLOYEES ──────────────────────────────────────────────
 router.get("/companies/:company_id/zoho-employees", authMiddleware, async function(req, res) {
   try {
-    var data = await zohoGet("All_Staff");
+    var data = await DB.getAllEmployees(DINE_COMPANY_ID);
     res.json({ success: true, data: data });
-  } catch(err) {
-    if (err.response && err.response.status === 404) return res.json({ success: true, data: [] });
-    res.status(500).json({ error: err.message });
-  }
+  } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── ATTENDANCE ─────────────────────────────────────────────────────
 router.get("/companies/:company_id/attendance", authMiddleware, async function(req, res) {
   try {
-    var date = req.query.date || formatZohoDate(new Date());
-    var data = await zohoGet("All_Attendances", { criteria: "attendance_date == \"" + date + "\"" });
+    var date = req.query.date || todayDate();
+    var data = await DB.getAttendanceByDate(DINE_COMPANY_ID, date);
     res.json({ success: true, data: data });
-  } catch(err) {
-    if (err.response && err.response.status === 404) return res.json({ success: true, data: [] });
-    res.status(500).json({ error: err.message });
-  }
+  } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── DAILY SALES ────────────────────────────────────────────────────
 router.get("/companies/:company_id/daily-sales", authMiddleware, async function(req, res) {
   try {
-    var date = req.query.date || formatZohoDate(new Date());
-    var data = await zohoGet("All_Daily_Sales", { criteria: "sale_date == \"" + date + "\"" });
+    var date = req.query.date || todayDate();
+    var data = await DB.getDailySalesByDate(DINE_COMPANY_ID, date);
     res.json({ success: true, data: data });
-  } catch(err) {
-    if (err.response && err.response.status === 404) return res.json({ success: true, data: [] });
-    res.status(500).json({ error: err.message });
-  }
+  } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── INVENTORY ──────────────────────────────────────────────────────
 router.get("/companies/:company_id/inventory", authMiddleware, async function(req, res) {
   try {
-    var data = await zohoGet("All_Inventory");
+    var data = await DB.getInventory(DINE_COMPANY_ID);
     res.json({ success: true, data: data });
-  } catch(err) {
-    if (err.response && err.response.status === 404) return res.json({ success: true, data: [] });
-    res.status(500).json({ error: err.message });
-  }
+  } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── PURCHASES ──────────────────────────────────────────────────────
 router.get("/companies/:company_id/purchases", authMiddleware, async function(req, res) {
   try {
-    var date = req.query.date || formatZohoDate(new Date());
-    var data = await zohoGet("All_Purchases", { criteria: "purchase_date == \"" + date + "\"" });
+    var date = req.query.date || todayDate();
+    var data = await DB.getPurchasesByDate(DINE_COMPANY_ID, date);
     res.json({ success: true, data: data });
-  } catch(err) {
-    if (err.response && err.response.status === 404) return res.json({ success: true, data: [] });
-    res.status(500).json({ error: err.message });
-  }
+  } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── LEAVE REQUESTS ─────────────────────────────────────────────────
 router.get("/companies/:company_id/leave-requests", authMiddleware, async function(req, res) {
   try {
-    var data = await zohoGet("All_Leave_Requests");
+    var data = await DB.getLeaveRequests(DINE_COMPANY_ID);
     res.json({ success: true, data: data });
-  } catch(err) {
-    if (err.response && err.response.status === 404) return res.json({ success: true, data: [] });
-    res.status(500).json({ error: err.message });
-  }
+  } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── WHATSAPP HELPER ─────────────────────────────────────────────────

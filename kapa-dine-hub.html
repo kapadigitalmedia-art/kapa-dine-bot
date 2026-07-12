@@ -674,7 +674,7 @@ function showPage(name, el) {
 }
 
 async function loadDashboard() {
-  var t = fmtZoho(new Date());
+  var t = today();
   try {
     var sales = await zohoGet("daily-sales", {date:t});
     var s = sales[0];
@@ -697,13 +697,13 @@ async function loadDashboard() {
   } catch(e) {}
   try {
     var att = await zohoGet("attendance", {date:t});
-    var present = att.filter(r=>r.attendance_status==="Present"||r.attendance_status==="Late").length;
-    var absent = att.filter(r=>r.attendance_status==="Absent").length;
+    var present = att.filter(r=>r.status==="Present"||r.status==="Late").length;
+    var absent = att.filter(r=>r.status==="Absent").length;
     document.getElementById("dPresent").textContent = present;
     document.getElementById("dPresentSub").textContent = absent + " absent today";
     var attHtml = att.length ? att.slice(0,6).map(r=>{
-      var n = r.staff_name && r.staff_name.display_value ? r.staff_name.display_value : (r.staff_name||"-");
-      var st = r.attendance_status||"Unknown";
+      var n = r.employee_name || "-";
+      var st = r.status||"Unknown";
       var sb = st==="Present"?badge("Present","green"):st==="Late"?badge("Late","amber"):badge("Absent","red");
       return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;font-weight:600;color:var(--text)">'+n+'</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--text-2)">'+fmtTime(r.check_in_time)+'</span>'+sb+'</div></div>';
     }).join("") : '<div class="empty-box"><i class="ti ti-users"></i><p>No attendance today</p></div>';
@@ -725,9 +725,8 @@ function var_(n) { return getComputedStyle(document.documentElement).getProperty
 
 async function loadSales() {
   var date = document.getElementById("salesDate").value || today();
-  var zt = fmtZoho(new Date(date));
   try {
-    var data = await zohoGet("daily-sales", {date:zt});
+    var data = await zohoGet("daily-sales", {date:date});
     var s = data[0];
     document.getElementById("sSales").textContent = s ? fmtRM(s.total_sales) : "RM 0";
     document.getElementById("sBills").textContent = s ? (s.total_bills||0) : "0";
@@ -744,26 +743,25 @@ async function loadSales() {
     } else {
       document.getElementById("salesBreakdown").innerHTML = '<div class="empty-box"><i class="ti ti-cash-register"></i><p>No sales data for this date</p></div>';
     }
-    var tHtml = data.length ? data.map(r=>'<tr><td>'+r.sale_date+'</td><td style="font-weight:700">'+fmtRM(r.total_sales)+'</td><td>'+(r.total_bills||0)+'</td><td>'+fmtRM(r.cash_amount)+'</td><td>'+fmtRM(r.card_amount)+'</td><td>'+fmtRM(r.online_amount)+'</td><td>'+fmtRM(r.grabfood_amount)+'</td><td>'+(r.submitted_by||"-")+'</td></tr>').join("") : empty(8,"No sales records");
+    var tHtml = data.length ? data.map(r=>'<tr><td>'+r.date+'</td><td style="font-weight:700">'+fmtRM(r.total_sales)+'</td><td>'+(r.total_bills||0)+'</td><td>'+fmtRM(r.cash_amount)+'</td><td>'+fmtRM(r.card_amount)+'</td><td>'+fmtRM(r.online_amount)+'</td><td>'+fmtRM(r.grabfood_amount)+'</td><td>'+(r.submitted_by||"-")+'</td></tr>').join("") : empty(8,"No sales records");
     document.getElementById("salesTable").innerHTML = tHtml;
   } catch(e) { document.getElementById("salesTable").innerHTML = empty(8,"Error loading data"); }
 }
 
 async function loadAttendance() {
   var date = document.getElementById("attDate").value || today();
-  var zt = fmtZoho(new Date(date));
   try {
-    var data = await zohoGet("attendance", {date:zt});
-    var present = data.filter(r=>r.attendance_status==="Present").length;
-    var late = data.filter(r=>r.attendance_status==="Late").length;
-    var absent = data.filter(r=>r.attendance_status==="Absent").length;
+    var data = await zohoGet("attendance", {date:date});
+    var present = data.filter(r=>r.status==="Present").length;
+    var late = data.filter(r=>r.status==="Late").length;
+    var absent = data.filter(r=>r.status==="Absent").length;
     document.getElementById("attPresent").textContent = present;
     document.getElementById("attLate").textContent = late;
     document.getElementById("attAbsent").textContent = absent;
     var html = data.length ? data.map(r=>{
-      var n = r.staff_name && r.staff_name.display_value ? r.staff_name.display_value : (r.staff_name||"-");
-      var st = r.attendance_status||"Unknown";
-      return '<tr><td style="font-weight:600">'+n+'</td><td>'+(r.designation||"-")+'</td><td>'+fmtTime(r.check_in_time)+'</td><td>'+fmtTime(r.check_out_time)+'</td><td>'+(st==="Present"?badge("Present","green"):st==="Late"?badge("Late","amber"):badge("Absent","red"))+'</td><td>'+(r.late_minutes||0)+'</td></tr>';
+      var n = r.employee_name || "-";
+      var st = r.status||"Unknown";
+      return '<tr><td style="font-weight:600">'+n+'</td><td>'+(r.designation||"-")+'</td><td>'+fmtTime(r.check_in_time)+'</td><td>'+fmtTime(r.check_out_time)+'</td><td>'+(st==="Present"?badge("Present","green"):st==="Late"?badge("Late","amber"):badge("Absent","red"))+'</td><td>0</td></tr>';
     }).join("") : empty(6,"No attendance records");
     document.getElementById("attTable").innerHTML = html;
   } catch(e) { document.getElementById("attTable").innerHTML = empty(6,"Error loading data"); }
@@ -797,12 +795,11 @@ function filterInventory() {
 
 async function loadPurchases() {
   var date = document.getElementById("purDate").value || today();
-  var zt = fmtZoho(new Date(date));
   try {
-    var data = await zohoGet("purchases", {date:zt});
+    var data = await zohoGet("purchases", {date:date});
     var html = data.length ? data.map(r=>{
       var st = r.status||"Pending";
-      return '<tr><td>'+(r.purchase_date||"-")+'</td><td style="font-weight:600">'+(r.item_name||"-")+'</td><td>'+(r.supplier_name||"-")+'</td><td>'+(r.quantity||0)+' '+(r.unit||"")+'</td><td>'+fmtRM(r.unit_price)+'</td><td style="font-weight:700">'+fmtRM(r.total_amount)+'</td><td>'+(r.submitted_by||"-")+'</td><td>'+(st==="Approved"?badge("Approved","green"):st==="Rejected"?badge("Rejected","red"):badge("Pending","amber"))+'</td></tr>';
+      return '<tr><td>'+(r.date||"-")+'</td><td style="font-weight:600">'+(r.item_name||"-")+'</td><td>'+(r.supplier_name||"-")+'</td><td>'+(r.quantity||0)+' '+(r.unit||"")+'</td><td>'+fmtRM(r.unit_price)+'</td><td style="font-weight:700">'+fmtRM(r.total_amount)+'</td><td>'+(r.submitted_by||"-")+'</td><td>'+(st==="Approved"?badge("Approved","green"):st==="Rejected"?badge("Rejected","red"):badge("Pending","amber"))+'</td></tr>';
     }).join("") : empty(8,"No purchase records");
     document.getElementById("purTable").innerHTML = html;
   } catch(e) { document.getElementById("purTable").innerHTML = empty(8,"Error loading data"); }
@@ -817,7 +814,7 @@ async function loadStaff() {
 }
 function renderStaff(items) {
   var html = items.length ? items.map(s=>{
-    var n = s.staff_name && s.staff_name.display_value ? s.staff_name.display_value : (s.staff_name||"-");
+    var n = s.employee_name || "-";
     var active = String(s.status||"").toLowerCase()==="active";
     return '<tr><td style="font-weight:600">'+n+'</td><td>'+(s.designation||"-")+'</td><td>'+(s.whatsapp_number||"-")+'</td><td>'+(s.shift_start||"08:00")+'</td><td>'+(active?badge("Active","green"):badge("Inactive","red"))+'</td></tr>';
   }).join("") : empty(5,"No staff found");
@@ -827,7 +824,7 @@ function filterStaff() {
   var s = document.getElementById("staffSearch").value.toLowerCase();
   var st = document.getElementById("staffStat").value;
   renderStaff(allStaff.filter(x=>{
-    var n = x.staff_name && x.staff_name.display_value ? x.staff_name.display_value : (x.staff_name||"");
+    var n = x.employee_name || "";
     return (!s||n.toLowerCase().includes(s)) && (!st||(x.status||"")===st);
   }));
 }
@@ -836,7 +833,7 @@ async function loadLeave() {
   try {
     var data = await zohoGet("leave-requests");
     var html = data.length ? data.map(r=>{
-      var n = r.staff_name && r.staff_name.display_value ? r.staff_name.display_value : (r.staff_name||"-");
+      var n = r.employee_name || "-";
       var st = r.status||"Pending";
       return '<tr><td style="font-weight:600">'+n+'</td><td>'+(r.leave_type||"-")+'</td><td>'+(r.start_date||"-")+'</td><td>'+(r.end_date||"-")+'</td><td>'+(r.reason||"-")+'</td><td>'+(st==="Approved"?badge("Approved","green"):st==="Rejected"?badge("Rejected","red"):badge("Pending","amber"))+'</td></tr>';
     }).join("") : empty(6,"No leave requests");
