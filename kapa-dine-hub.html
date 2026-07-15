@@ -178,14 +178,18 @@ tr:hover td{background:#FDFAF9}
 .pos-cat{padding:5px 12px;border-radius:99px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:12px;font-weight:600;cursor:pointer;transition:var(--t);white-space:nowrap}
 .pos-cat.active{background:var(--red);border-color:var(--red);color:#fff}
 .pos-cat:hover{background:var(--border);color:var(--text)}
-.pos-menu-grid{flex:1;overflow-y:auto;padding:16px 18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:start}
-.pos-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 12px;cursor:pointer;transition:var(--t);text-align:center}
-.pos-item:hover{background:var(--red-light);border-color:var(--red);transform:translateY(-1px)}
-.pos-item:active{transform:scale(0.97)}
-.pos-item-emoji{font-size:24px;margin-bottom:6px}
-.pos-item-name{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:3px;line-height:1.3}
-.pos-item-cat{font-size:10.5px;color:var(--text-3);margin-bottom:5px}
-.pos-item-price{font-size:13.5px;font-weight:800;color:var(--red)}
+.pos-menu-grid{flex:1;overflow-y:auto;padding:16px 18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-content:start}
+.pos-item{background:#fff;border:1px solid var(--border);border-radius:14px;cursor:pointer;transition:var(--t);text-align:left;overflow:hidden;box-shadow:0 1px 3px rgba(15,10,0,0.04)}
+.pos-item:hover{border-color:var(--red);transform:translateY(-3px);box-shadow:0 10px 24px rgba(15,10,0,0.12)}
+.pos-item:active{transform:scale(0.98)}
+.pos-item-imgwrap{position:relative;width:100%;height:120px;overflow:hidden;background:var(--surface)}
+.pos-item-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.3s ease}
+.pos-item:hover .pos-item-img{transform:scale(1.06)}
+.pos-item-emoji-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,var(--surface),var(--border))}
+.pos-item-body{padding:10px 12px 12px}
+.pos-item-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pos-item-cat{font-size:10.5px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px}
+.pos-item-price{font-size:14px;font-weight:800;color:var(--red)}
 .pos-right{display:flex;flex-direction:column;background:var(--surface)}
 .pos-order-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .pos-order-title{font-size:14px;font-weight:700;color:var(--navy)}
@@ -255,6 +259,109 @@ tr:hover td{background:#FDFAF9}
 /* ── INVENTORY STOCK BAR ── */
 .stock-bar-wrap{width:70px;height:5px;background:var(--border);border-radius:99px;overflow:hidden}
 .stock-bar-fill{height:100%;border-radius:99px}
+
+/* ── MENU MANAGEMENT ── */
+.menu-mgmt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.menu-mgmt-card{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);transition:var(--t)}
+.menu-mgmt-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.menu-mgmt-card.unavailable{opacity:0.6}
+.menu-mgmt-imgwrap{position:relative;width:100%;height:140px;background:var(--surface);overflow:hidden}
+.menu-mgmt-img{width:100%;height:100%;object-fit:cover;display:block}
+.menu-mgmt-emoji-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:44px;background:linear-gradient(135deg,var(--surface),var(--border))}
+.menu-mgmt-unavail-badge{position:absolute;top:8px;left:8px;background:rgba(15,10,0,0.75);color:#fff;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:0.4px}
+.menu-mgmt-body{padding:12px 14px 14px}
+.menu-mgmt-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.menu-mgmt-cat{font-size:11px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:6px}
+.menu-mgmt-price{font-size:15px;font-weight:800;color:var(--red);margin-bottom:10px}
+.menu-mgmt-price.strike{color:var(--text-3);text-decoration:line-through}
+.menu-mgmt-actions{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.menu-mgmt-btns{display:flex;gap:6px}
+.menu-mgmt-icon-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--t);font-size:13px}
+.menu-mgmt-icon-btn:hover{background:var(--red-light);border-color:var(--red);color:var(--red)}
+
+/* ── TOGGLE SWITCH ── */
+.toggle-switch{position:relative;display:inline-block;width:38px;height:22px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--border-strong);border-radius:99px;transition:var(--t)}
+.toggle-slider::before{content:"";position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:var(--t)}
+.toggle-switch input:checked + .toggle-slider{background:var(--red)}
+.toggle-switch input:checked + .toggle-slider::before{transform:translateX(16px)}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,10,0,0.45);z-index:2000;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:var(--r-lg);width:100%;max-width:420px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal-hdr h3{font-size:16px;font-weight:800;color:var(--navy)}
+.modal-close-btn{width:28px;height:28px;border-radius:7px;border:none;background:var(--surface);color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-close-btn:hover{background:var(--border)}
+.modal-body{padding:16px 20px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border)}
+.form-label{display:block;font-size:12px;font-weight:700;color:var(--text-2);margin:12px 0 5px}
+.form-label:first-child{margin-top:0}
+.form-input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13.5px;color:var(--text);outline:none;font-family:inherit}
+.form-input:focus{border-color:var(--red)}
+.form-row-toggle{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+
+/* ── PACKAGE SWITCHER ── */
+.pkg-switcher{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.pkg-switcher-label{font-size:9.5px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.pkg-switcher-btns{display:flex;flex-direction:column;gap:5px}
+.pkg-btn{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.55);font-size:11.5px;font-weight:600;cursor:pointer;transition:var(--t);text-align:left}
+.pkg-btn:hover{background:rgba(255,255,255,0.07);color:#fff}
+.pkg-btn.active{background:rgba(217,48,37,0.18);border-color:var(--red);color:#ff8a80}
+
+/* ── PLAN BANNER ── */
+.plan-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 22px;background:linear-gradient(90deg,rgba(217,48,37,0.08),rgba(217,48,37,0.02));border-bottom:1px solid var(--border);flex-wrap:wrap}
+.plan-banner-left{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--navy)}
+.plan-banner-price{font-size:11.5px;font-weight:600;color:var(--text-2)}
+.plan-banner-upgrade{font-size:12px;font-weight:700;color:var(--red);cursor:pointer;background:none;border:none;padding:0;text-decoration:underline;text-underline-offset:2px}
+.plan-banner-max{font-size:12px;font-weight:700;color:var(--success)}
+
+/* ── SETTINGS: PLAN CARD ── */
+.plan-card{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.plan-card-name{font-size:20px;font-weight:800;color:var(--navy)}
+.plan-card-sub{font-size:12.5px;color:var(--text-2);margin-top:2px}
+.plan-price-row{display:flex;gap:28px;flex-wrap:wrap}
+.plan-price-box{text-align:right}
+.plan-price-val{font-size:19px;font-weight:800;color:var(--red)}
+.plan-price-label{font-size:11px;color:var(--text-2);margin-top:2px}
+
+/* ── COMPARISON TABLE ── */
+.compare-table{width:100%;border-collapse:collapse}
+.compare-table th,.compare-table td{padding:11px 14px;text-align:center;border-bottom:1px solid var(--border);font-size:13px}
+.compare-table th:first-child,.compare-table td:first-child{text-align:left;color:var(--text-2);font-weight:600}
+.compare-table thead th{font-size:12.5px;color:var(--text-2)}
+.compare-plan-hdr{font-size:15px;font-weight:800;color:var(--navy)}
+.compare-plan-price{font-size:11.5px;color:var(--text-2);font-weight:600;margin-top:2px}
+.compare-table .ti-check{color:var(--success)}
+.compare-table .ti-minus{color:var(--text-3)}
+.compare-switch-btn{margin-top:8px}
+
+/* ── ADD-ONS ── */
+.addon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.addon-card{border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;transition:var(--t)}
+.addon-card.active{border-color:var(--red);background:var(--red-light)}
+.addon-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.addon-icon{font-size:24px}
+.addon-name{font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.addon-desc{font-size:11.5px;color:var(--text-2);line-height:1.4;margin-bottom:10px;min-height:32px}
+.addon-bottom{display:flex;align-items:center;justify-content:space-between}
+.addon-price{font-size:13px;font-weight:800;color:var(--red)}
+.addon-price span{font-size:10.5px;color:var(--text-2);font-weight:500}
+
+/* ── BILL SUMMARY ── */
+.bill-row{display:flex;justify-content:space-between;padding:8px 0;font-size:13.5px;color:var(--text-2);border-bottom:1px solid var(--border)}
+.bill-row:last-of-type{border-bottom:none}
+.bill-row.total{font-weight:800;color:var(--navy);font-size:15px;padding-top:12px;border-top:1.5px solid var(--border-strong);margin-top:4px}
+.bill-row.setup{color:var(--warning);font-weight:700}
+.contact-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+/* ── SIMPLE DEMO PLACEHOLDER PAGES (Food Court) ── */
+.demo-location-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.demo-location-card{border:1px solid var(--border);border-radius:var(--r-lg);padding:16px}
+.demo-location-card h4{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.demo-location-card .loc-sub{font-size:11.5px;color:var(--text-2);margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -298,17 +405,31 @@ tr:hover td{background:#FDFAF9}
         <div class="sb-company-sub">Operations</div>
       </div>
     </div>
+    <div class="pkg-switcher">
+      <div class="pkg-switcher-label">Demo package</div>
+      <div class="pkg-switcher-btns">
+        <button class="pkg-btn" data-pkg="mamak" onclick="switchPlan('mamak')">🥘 Mamak Shop</button>
+        <button class="pkg-btn" data-pkg="restaurant" onclick="switchPlan('restaurant')">🍽️ Restaurant</button>
+        <button class="pkg-btn" data-pkg="foodcourt" onclick="switchPlan('foodcourt')">🏪 Food Court</button>
+      </div>
+    </div>
     <div class="sb-nav">
       <div class="sb-section">Overview</div>
       <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="ic"><i class="ti ti-layout-dashboard"></i></span>Dashboard</div>
       <div class="nav-item" onclick="showPage('sales',this)"><span class="ic"><i class="ti ti-coin"></i></span>Daily Sales</div>
       <div class="nav-item" onclick="showPage('attendance',this)"><span class="ic"><i class="ti ti-clock"></i></span>Attendance</div>
       <div class="sb-section">Operations</div>
+      <div class="nav-item" id="navMenu" data-feature="menu" onclick="showPage('menu',this)"><span class="ic"><i class="ti ti-tools-kitchen-2"></i></span>Menu</div>
       <div class="nav-item" onclick="showPage('inventory',this)"><span class="ic"><i class="ti ti-box"></i></span>Inventory</div>
       <div class="nav-item" onclick="showPage('purchases',this)"><span class="ic"><i class="ti ti-receipt"></i></span>Purchases</div>
       <div class="sb-section">People</div>
       <div class="nav-item" onclick="showPage('staff',this)"><span class="ic"><i class="ti ti-users"></i></span>Staff</div>
       <div class="nav-item" onclick="showPage('leave',this)"><span class="ic"><i class="ti ti-calendar-off"></i></span>Leave</div>
+      <div class="sb-section" id="navSectionEnterprise" data-feature="foodcourt">Enterprise</div>
+      <div class="nav-item" id="navLocations" data-feature="foodcourt" onclick="showPage('locations',this)"><span class="ic"><i class="ti ti-map-pin"></i></span>Locations</div>
+      <div class="nav-item" id="navChainReports" data-feature="foodcourt" onclick="showPage('chainreports',this)"><span class="ic"><i class="ti ti-chart-bar"></i></span>Chain Reports</div>
+      <div class="sb-section">Account</div>
+      <div class="nav-item" onclick="showPage('settings',this)"><span class="ic"><i class="ti ti-settings"></i></span>Settings</div>
     </div>
     <div class="sb-bottom">
       <div class="nav-item" onclick="doLogout()"><span class="ic"><i class="ti ti-logout"></i></span>Sign out</div>
@@ -322,7 +443,7 @@ tr:hover td{background:#FDFAF9}
         <div class="topbar-title" id="topbarTitle">Dashboard</div>
       </div>
       <div class="topbar-right">
-        <button class="pos-launch-btn" onclick="openPOS()">
+        <button class="pos-launch-btn" id="posLaunchBtn" data-feature="pos" onclick="openPOS()">
           <i class="ti ti-device-tablet"></i> Open POS
         </button>
         <div class="user-chip">
@@ -330,6 +451,14 @@ tr:hover td{background:#FDFAF9}
           <div class="user-name" id="userName">User</div>
         </div>
       </div>
+    </div>
+
+    <div class="plan-banner" id="planBanner">
+      <div class="plan-banner-left">
+        <span id="planBannerLabel">🍽️ Restaurant Plan</span>
+        <span class="plan-banner-price" id="planBannerPrice">RM 499/month + RM 3,999 setup</span>
+      </div>
+      <div id="planBannerAction"></div>
     </div>
 
     <div class="content">
@@ -402,6 +531,24 @@ tr:hover td{background:#FDFAF9}
         </div>
       </div>
 
+      <!-- MENU MANAGEMENT -->
+      <div class="page" id="page-menu">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>Menu</h2><p>Manage menu items shown in POS</p></div>
+          <div class="page-hdr-right">
+            <button class="btn btn-primary btn-sm" onclick="openMenuModal(null)"><i class="ti ti-plus"></i> Add item</button>
+            <button class="btn btn-sm" onclick="loadMenuPage()"><i class="ti ti-refresh"></i></button>
+          </div>
+        </div>
+        <div class="filter-bar">
+          <input type="text" id="menuSearch" placeholder="Search menu items..." oninput="renderMenuCards()" style="width:220px" />
+          <select id="menuCat" onchange="renderMenuCards()">
+            <option value="">All categories</option>
+          </select>
+        </div>
+        <div class="menu-mgmt-grid" id="menuMgmtGrid"><div class="loading-box"><div class="spinner"></div></div></div>
+      </div>
+
       <!-- INVENTORY -->
       <div class="page" id="page-inventory">
         <div class="page-hdr">
@@ -465,6 +612,104 @@ tr:hover td{background:#FDFAF9}
         </div>
       </div>
 
+      <!-- LOCATIONS (Food Court plan) -->
+      <div class="page" id="page-locations">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>Locations</h2><p>Manage all your outlets from one place</p></div>
+        </div>
+        <div class="demo-location-grid" id="locationsGrid"></div>
+      </div>
+
+      <!-- CHAIN REPORTS (Food Court plan) -->
+      <div class="page" id="page-chainreports">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>Chain Reports</h2><p>Combined performance across all locations</p></div>
+        </div>
+        <div class="stats-grid" id="chainStatsGrid"></div>
+        <div class="card">
+          <div class="card-hdr"><div><h3>Sales by location</h3><div class="card-hdr-sub">This month</div></div></div>
+          <div class="tbl-wrap"><table><thead><tr><th>Location</th><th>Sales</th><th>Bills</th><th>Avg / bill</th></tr></thead><tbody id="chainLocTable"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="page-hdr">
+          <div class="page-hdr-left"><h2>Settings</h2><p>Plan, add-ons and billing</p></div>
+          <div class="page-hdr-right"><button class="btn btn-sm" onclick="loadSettingsPage()"><i class="ti ti-refresh"></i></button></div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr"><div><h3>Current plan</h3></div></div>
+          <div class="plan-card">
+            <div>
+              <div class="plan-card-name" id="setPlanName">Restaurant Plan</div>
+              <div class="plan-card-sub" id="setPlanSub">Everything you need to run a full-service restaurant</div>
+            </div>
+            <div class="plan-price-row">
+              <div class="plan-price-box"><div class="plan-price-val" id="setPlanMonthly">RM 499</div><div class="plan-price-label">Monthly Fee</div></div>
+              <div class="plan-price-box"><div class="plan-price-val" id="setPlanSetup">RM 3,999</div><div class="plan-price-label">Setup Fee (one-time)</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr"><div><h3>Compare plans</h3><div class="card-hdr-sub">Switch anytime — changes apply instantly in this demo</div></div></div>
+          <div class="tbl-wrap">
+            <table class="compare-table" id="compareTable"></table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr"><div><h3>Add-ons</h3><div class="card-hdr-sub">Extend your plan with optional features</div></div></div>
+          <div class="addon-grid" id="addonGrid"><div class="loading-box"><div class="spinner"></div>Loading...</div></div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-hdr"><div><h3>Monthly bill summary</h3></div></div>
+            <div id="billSummary"></div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div><h3>Need help choosing?</h3></div></div>
+            <p style="font-size:12.5px;color:var(--text-2);line-height:1.5">Talk to our team about the right plan and add-ons for your business.</p>
+            <div class="contact-row">
+              <a class="btn btn-primary btn-sm" href="https://wa.me/917550008031" target="_blank"><i class="ti ti-brand-whatsapp"></i> Contact KAPA Sales</a>
+              <a class="btn btn-sm" href="mailto:sales@kapa.my"><i class="ti ti-mail"></i> Email Us</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MENU ITEM MODAL -->
+<div class="modal-overlay" id="menuModalOverlay">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3 id="menuModalTitle">Add menu item</h3>
+      <button class="modal-close-btn" onclick="closeMenuModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <label class="form-label">Item name</label>
+      <input type="text" id="miName" class="form-input" placeholder="e.g. Nasi Lemak" />
+      <label class="form-label">Category</label>
+      <input type="text" id="miCategory" class="form-input" placeholder="e.g. Rice" list="miCategoryList" />
+      <datalist id="miCategoryList"></datalist>
+      <label class="form-label">Price (RM)</label>
+      <input type="number" id="miPrice" class="form-input" step="0.01" min="0" placeholder="0.00" />
+      <label class="form-label">Image URL</label>
+      <input type="text" id="miImage" class="form-input" placeholder="https://images.unsplash.com/..." />
+      <div class="form-row-toggle">
+        <label class="form-label" style="margin:0">Available in POS</label>
+        <label class="toggle-switch"><input type="checkbox" id="miAvailable" checked /><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm" onclick="closeMenuModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="miSaveBtn" onclick="saveMenuItem()"><i class="ti ti-check"></i> Save item</button>
     </div>
   </div>
 </div>
@@ -571,7 +816,7 @@ async function loadPosMenu() {
   try {
     var d = await apiFetch("/hub/dine/menu");
     MENU = (d.data || []).map(function(m) {
-      return { id: m.id, name: m.item_name, price: parseFloat(m.price || 0), cat: m.category || "Other", emoji: emojiForCategory(m.category) };
+      return { id: m.id, name: m.item_name, price: parseFloat(m.price || 0), cat: m.category || "Other", emoji: emojiForCategory(m.category), image: m.image_url || "" };
     });
     posMenuLoaded = true;
     renderPosCategories();
@@ -649,6 +894,7 @@ function bootApp(user, company) {
   document.getElementById("attDate").value = today();
   document.getElementById("purDate").value = today();
   loadDashboard();
+  applyPackageVisibility();
 }
 function doLogout() {
   token = null; companyId = null;
@@ -657,7 +903,196 @@ function doLogout() {
   document.getElementById("loginWrap").style.display = "flex";
 }
 
-var PAGE_TITLES = { dashboard:"Dashboard", sales:"Daily Sales", attendance:"Attendance", inventory:"Inventory", purchases:"Purchases", staff:"Staff", leave:"Leave requests" };
+// ── PACKAGE SWITCHER + ADD-ONS (demo pricing) ──────────────────────
+var PACKAGES = {
+  mamak: {
+    label: "Mamak Shop", banner: "🥘 Mamak Shop Plan", monthly: 249, setup: 2499,
+    sub: "Core operations for a mamak or small food stall",
+    features: ["core"],
+    upgradeText: "Upgrade to Restaurant Plan for POS & Online Orders →", upgradeTarget: "restaurant"
+  },
+  restaurant: {
+    label: "Restaurant", banner: "🍽️ Restaurant Plan", monthly: 499, setup: 3999,
+    sub: "Everything you need to run a full-service restaurant",
+    features: ["core", "pos", "menu", "orders", "kitchen"],
+    upgradeText: "Upgrade to Food Court Plan for multi-location →", upgradeTarget: "foodcourt"
+  },
+  foodcourt: {
+    label: "Food Court & Chain", banner: "🏪 Food Court & Chain Plan", monthly: 899, setup: 5999,
+    sub: "Multi-location management with consolidated reporting",
+    features: ["core", "pos", "menu", "orders", "kitchen", "foodcourt"],
+    upgradeText: null, upgradeTarget: null
+  }
+};
+var COMPARE_FEATURES = [
+  { label: "Dashboard, Attendance, Daily Sales", feature: "core" },
+  { label: "Inventory, Purchases, Staff, Leave", feature: "core" },
+  { label: "POS System", feature: "pos" },
+  { label: "Menu Management", feature: "menu" },
+  { label: "Online Orders", feature: "orders" },
+  { label: "Kitchen Notifications", feature: "kitchen" },
+  { label: "Multi-Location", feature: "foodcourt" },
+  { label: "Chain Reports", feature: "foodcourt" }
+];
+var ADDON_META = {
+  whatsapp_ordering:     { name: "WhatsApp Online Ordering",    icon: "📱", price: 99,  desc: "Let customers order directly via WhatsApp chat" },
+  receipt_printer:       { name: "Receipt Printer Integration", icon: "🖨️", price: 49,  desc: "Auto-print receipts and kitchen tickets" },
+  advanced_analytics:    { name: "Advanced Analytics",          icon: "📊", price: 79,  desc: "Deep sales trends, peak hours, and item performance reports" },
+  customer_website:      { name: "Customer Website with Menu",  icon: "🌐", price: 149, desc: "Branded public menu website for your restaurant" },
+  online_payment:        { name: "Online Payment (FPX/Card)",   icon: "💳", price: 99,  desc: "Accept FPX and card payments online" },
+  supplier_management:   { name: "Supplier Management",         icon: "📦", price: 69,  desc: "Track suppliers, orders, and delivery schedules" },
+  loyalty_program:       { name: "Loyalty Program",              icon: "👥", price: 89,  desc: "Points and rewards to keep customers coming back" },
+  delivery_management:   { name: "Delivery Management",          icon: "🚗", price: 119, desc: "Assign riders and track delivery orders" },
+  digital_menu_board:    { name: "Digital Menu Board",            icon: "📸", price: 59,  desc: "Display your menu on a TV or tablet screen" },
+  staff_whatsapp_alerts: { name: "Staff WhatsApp Alerts",         icon: "🔔", price: 39,  desc: "Notify staff instantly about shifts and tasks via WhatsApp" }
+};
+
+function getPlan() { return localStorage.getItem("dine_plan") || "restaurant"; }
+function setPlanLocal(p) { localStorage.setItem("dine_plan", p); }
+function getAddonState() { try { return JSON.parse(localStorage.getItem("dine_addons") || "{}"); } catch(e) { return {}; } }
+function setAddonState(s) { localStorage.setItem("dine_addons", JSON.stringify(s)); }
+
+async function switchPlan(newPlan) {
+  var wasOnHiddenPage = false;
+  setPlanLocal(newPlan);
+  applyPackageVisibility();
+  if (document.getElementById("page-settings").classList.contains("active")) renderSettingsFromState();
+  try { await apiFetch("/hub/dine/settings/plan", { method: "PUT", body: JSON.stringify({ plan: newPlan }) }); } catch(e) { /* demo still works from localStorage */ }
+}
+
+function applyPackageVisibility() {
+  var plan = getPlan();
+  var cfg = PACKAGES[plan] || PACKAGES.restaurant;
+  document.querySelectorAll(".pkg-btn").forEach(function(b) { b.classList.toggle("active", b.getAttribute("data-pkg") === plan); });
+
+  document.querySelectorAll("[data-feature]").forEach(function(el) {
+    var feat = el.getAttribute("data-feature");
+    var visible = feat === "pos" ? cfg.features.indexOf("pos") !== -1
+                : feat === "menu" ? cfg.features.indexOf("menu") !== -1
+                : feat === "foodcourt" ? cfg.features.indexOf("foodcourt") !== -1
+                : true;
+    el.style.display = visible ? "" : "none";
+  });
+
+  document.getElementById("planBannerLabel").textContent = cfg.banner;
+  document.getElementById("planBannerPrice").textContent = "RM " + cfg.monthly + "/month + RM " + cfg.setup.toLocaleString() + " setup";
+  var actionEl = document.getElementById("planBannerAction");
+  if (cfg.upgradeTarget) {
+    actionEl.innerHTML = '<button class="plan-banner-upgrade" onclick="switchPlan(\'' + cfg.upgradeTarget + '\')">' + cfg.upgradeText + '</button>';
+  } else {
+    actionEl.innerHTML = '<span class="plan-banner-max">✅ You have the most advanced plan!</span>';
+  }
+
+  // If the page currently open just got hidden by this plan (e.g. Menu while on Mamak), bounce to dashboard.
+  var activePage = document.querySelector(".page.active");
+  if (activePage) {
+    var navEl = document.querySelector('.nav-item[onclick*="' + activePage.id.replace("page-", "") + '"]');
+    if (navEl && navEl.hasAttribute("data-feature") && navEl.style.display === "none") {
+      showPage("dashboard", document.querySelector('.nav-item[onclick*="dashboard"]'));
+    }
+  }
+}
+
+function fmtMoney(n) { return "RM " + Number(n||0).toLocaleString(undefined, { minimumFractionDigits: 0 }); }
+
+async function loadSettingsPage() {
+  var plan = getPlan(), addonState = getAddonState();
+  try {
+    var d = await apiFetch("/hub/dine/settings");
+    if (d.success) {
+      plan = d.plan; setPlanLocal(plan);
+      addonState = {};
+      d.addons.forEach(function(a) { addonState[a.key] = a.is_active; });
+      setAddonState(addonState);
+    }
+  } catch(e) { /* fall back to localStorage below */ }
+  applyPackageVisibility();
+  renderSettingsFromState();
+}
+
+function renderSettingsFromState() {
+  var plan = getPlan(), cfg = PACKAGES[plan] || PACKAGES.restaurant, addonState = getAddonState();
+  document.getElementById("setPlanName").textContent = cfg.label + " Plan";
+  document.getElementById("setPlanSub").textContent = cfg.sub;
+  document.getElementById("setPlanMonthly").textContent = fmtMoney(cfg.monthly);
+  document.getElementById("setPlanSetup").textContent = fmtMoney(cfg.setup);
+
+  var order = ["mamak", "restaurant", "foodcourt"];
+  var thead = '<thead><tr><th></th>' + order.map(function(p) {
+    var c = PACKAGES[p];
+    return '<th><div class="compare-plan-hdr">' + c.banner.replace(/^\S+\s/, "") + '</div><div class="compare-plan-price">RM ' + c.monthly + '/mo</div>' +
+      (p === plan ? '<span class="badge badge-red compare-switch-btn">Current plan</span>' : '<button class="btn btn-xs compare-switch-btn" onclick="switchPlan(\'' + p + '\')">Switch</button>') +
+      '</th>';
+  }).join("") + '</tr></thead>';
+  var tbody = '<tbody>' + COMPARE_FEATURES.map(function(f) {
+    return '<tr><td>' + f.label + '</td>' + order.map(function(p) {
+      var has = PACKAGES[p].features.indexOf(f.feature) !== -1;
+      return '<td>' + (has ? '<i class="ti ti-check"></i>' : '<i class="ti ti-minus"></i>') + '</td>';
+    }).join("") + '</tr>';
+  }).join("") + '</tbody>';
+  document.getElementById("compareTable").innerHTML = thead + tbody;
+
+  var grid = document.getElementById("addonGrid");
+  grid.innerHTML = Object.keys(ADDON_META).map(function(key) {
+    var a = ADDON_META[key];
+    var active = !!addonState[key];
+    return '<div class="addon-card' + (active ? ' active' : '') + '">' +
+      '<div class="addon-card-top"><div class="addon-icon">' + a.icon + '</div><label class="toggle-switch"><input type="checkbox" ' + (active ? "checked" : "") + ' onchange="toggleAddon(\'' + key + '\',this.checked)" /><span class="toggle-slider"></span></label></div>' +
+      '<div class="addon-name">' + a.name + '</div>' +
+      '<div class="addon-desc">' + a.desc + '</div>' +
+      '<div class="addon-bottom"><div class="addon-price">RM ' + a.price + ' <span>/month</span></div>' + (active ? '<span class="badge badge-green">Active</span>' : "") + '</div>' +
+      '</div>';
+  }).join("");
+
+  renderBillSummary();
+}
+
+async function toggleAddon(key, isActive) {
+  var state = getAddonState();
+  state[key] = isActive;
+  setAddonState(state);
+  renderSettingsFromState();
+  try { await apiFetch("/hub/dine/settings/addons", { method: "PUT", body: JSON.stringify({ addon_key: key, is_active: isActive }) }); } catch(e) { /* demo still works from localStorage */ }
+}
+
+function renderBillSummary() {
+  var plan = getPlan(), cfg = PACKAGES[plan] || PACKAGES.restaurant, addonState = getAddonState();
+  var addonTotal = 0, activeCount = 0;
+  Object.keys(ADDON_META).forEach(function(key) { if (addonState[key]) { addonTotal += ADDON_META[key].price; activeCount++; } });
+  var html = '';
+  html += '<div class="bill-row"><span>Plan</span><span>' + fmtMoney(cfg.monthly) + '/month</span></div>';
+  html += '<div class="bill-row"><span>Add-ons (' + activeCount + ' active)</span><span>' + fmtMoney(addonTotal) + '/month</span></div>';
+  html += '<div class="bill-row total"><span>Total</span><span>' + fmtMoney(cfg.monthly + addonTotal) + '/month</span></div>';
+  html += '<div class="bill-row setup"><span>Setup Fee (one-time)</span><span>' + fmtMoney(cfg.setup) + '</span></div>';
+  document.getElementById("billSummary").innerHTML = html;
+}
+
+var DEMO_LOCATIONS = [
+  { name: "Ritz Restaurant — Puchong", sub: "Flagship outlet", sales: 18420, bills: 612 },
+  { name: "Ritz Restaurant — Subang Jaya", sub: "Opened 2025", sales: 14150, bills: 489 },
+  { name: "Ritz Restaurant — Cheras", sub: "Opened 2026", sales: 9870, bills: 340 }
+];
+function loadLocationsPage() {
+  document.getElementById("locationsGrid").innerHTML = DEMO_LOCATIONS.map(function(l) {
+    return '<div class="demo-location-card"><h4>' + l.name + '</h4><div class="loc-sub">' + l.sub + '</div>' +
+      '<div class="bill-row"><span>This month sales</span><span>' + fmtMoney(l.sales) + '</span></div>' +
+      '<div class="bill-row"><span>Bills</span><span>' + l.bills + '</span></div></div>';
+  }).join("");
+}
+function loadChainReportsPage() {
+  var totalSales = DEMO_LOCATIONS.reduce(function(s,l){ return s+l.sales; }, 0);
+  var totalBills = DEMO_LOCATIONS.reduce(function(s,l){ return s+l.bills; }, 0);
+  document.getElementById("chainStatsGrid").innerHTML =
+    '<div class="stat-card"><div class="stat-card-top"><div><div class="stat-val">' + fmtMoney(totalSales) + '</div><div class="stat-label">Chain Sales (month)</div></div><div class="stat-icon red"><i class="ti ti-cash"></i></div></div></div>' +
+    '<div class="stat-card"><div class="stat-card-top"><div><div class="stat-val">' + totalBills + '</div><div class="stat-label">Total Bills</div></div><div class="stat-icon blue"><i class="ti ti-receipt"></i></div></div></div>' +
+    '<div class="stat-card"><div class="stat-card-top"><div><div class="stat-val">' + DEMO_LOCATIONS.length + '</div><div class="stat-label">Active Locations</div></div><div class="stat-icon green"><i class="ti ti-map-pin"></i></div></div></div>';
+  document.getElementById("chainLocTable").innerHTML = DEMO_LOCATIONS.map(function(l) {
+    var avg = l.bills ? l.sales/l.bills : 0;
+    return '<tr><td>' + l.name + '</td><td>' + fmtMoney(l.sales) + '</td><td>' + l.bills + '</td><td>' + fmtMoney(avg) + '</td></tr>';
+  }).join("");
+}
+
+var PAGE_TITLES = { dashboard:"Dashboard", sales:"Daily Sales", attendance:"Attendance", menu:"Menu", inventory:"Inventory", purchases:"Purchases", staff:"Staff", leave:"Leave requests", locations:"Locations", chainreports:"Chain Reports", settings:"Settings" };
 function showPage(name, el) {
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
@@ -667,10 +1102,14 @@ function showPage(name, el) {
   if (name==="dashboard") loadDashboard();
   if (name==="sales") loadSales();
   if (name==="attendance") loadAttendance();
+  if (name==="menu") loadMenuPage();
   if (name==="inventory") loadInventory();
   if (name==="purchases") loadPurchases();
   if (name==="staff") loadStaff();
   if (name==="leave") loadLeave();
+  if (name==="locations") loadLocationsPage();
+  if (name==="chainreports") loadChainReportsPage();
+  if (name==="settings") loadSettingsPage();
 }
 
 async function loadDashboard() {
@@ -841,6 +1280,121 @@ async function loadLeave() {
   } catch(e) { document.getElementById("leaveTable").innerHTML = empty(6,"Error loading data"); }
 }
 
+// ── MENU MANAGEMENT ─────────────────────────────────────────────
+var menuMgmtCache = [];
+var editingMenuItemId = null;
+
+async function loadMenuPage() {
+  document.getElementById("menuMgmtGrid").innerHTML = '<div class="loading-box"><div class="spinner"></div></div>';
+  try {
+    var d = await apiFetch("/hub/dine/menu");
+    menuMgmtCache = d.data || [];
+    var cats = Array.from(new Set(menuMgmtCache.map(i => i.category).filter(Boolean)));
+    document.getElementById("miCategoryList").innerHTML = cats.map(c => '<option value="'+c+'">').join("");
+    var catSel = document.getElementById("menuCat");
+    var curVal = catSel.value;
+    catSel.innerHTML = '<option value="">All categories</option>' + cats.map(c => '<option>'+c+'</option>').join("");
+    catSel.value = curVal;
+    renderMenuCards();
+    if (typeof loadPosMenu === "function") { posMenuLoaded = false; }
+  } catch (e) {
+    document.getElementById("menuMgmtGrid").innerHTML = '<div class="empty-box"><i class="ti ti-alert-circle"></i><p>Could not load menu</p></div>';
+  }
+}
+
+function renderMenuCards() {
+  var search = (document.getElementById("menuSearch")||{value:""}).value.toLowerCase();
+  var cat = (document.getElementById("menuCat")||{value:""}).value;
+  var items = menuMgmtCache.filter(i => (!cat||i.category===cat) && (!search||(i.item_name||"").toLowerCase().includes(search)));
+  var grid = document.getElementById("menuMgmtGrid");
+  if (!items.length) { grid.innerHTML = '<div class="empty-box" style="grid-column:1/-1"><i class="ti ti-tools-kitchen-2"></i><p>No menu items found</p></div>'; return; }
+  grid.innerHTML = items.map(function(i) {
+    var available = !!i.is_available;
+    var emoji = emojiForCategory(i.category);
+    var img = i.image_url
+      ? '<img class="menu-mgmt-img" src="'+i.image_url+'" alt="" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=&quot;menu-mgmt-emoji-fallback&quot;>'+emoji+'</div>\'">'
+      : '<div class="menu-mgmt-emoji-fallback">'+emoji+'</div>';
+    return '<div class="menu-mgmt-card '+(available?"":"unavailable")+'">' +
+      '<div class="menu-mgmt-imgwrap">'+img+(available?"":'<div class="menu-mgmt-unavail-badge">Unavailable</div>')+'</div>' +
+      '<div class="menu-mgmt-body">' +
+        '<div class="menu-mgmt-name">'+(i.item_name||"-")+'</div>' +
+        '<div class="menu-mgmt-cat">'+(i.category||"-")+'</div>' +
+        '<div class="menu-mgmt-price'+(available?"":" strike")+'">RM '+parseFloat(i.price||0).toFixed(2)+'</div>' +
+        '<div class="menu-mgmt-actions">' +
+          '<label class="toggle-switch"><input type="checkbox" '+(available?"checked":"")+' onchange="toggleMenuAvailable('+i.id+',this.checked)" /><span class="toggle-slider"></span></label>' +
+          '<div class="menu-mgmt-btns">' +
+            '<button class="menu-mgmt-icon-btn" onclick="openMenuModal('+i.id+')"><i class="ti ti-edit"></i></button>' +
+            '<button class="menu-mgmt-icon-btn" onclick="deleteMenuItemUI('+i.id+')"><i class="ti ti-trash"></i></button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join("");
+}
+
+function openMenuModal(id) {
+  editingMenuItemId = id;
+  var item = id ? menuMgmtCache.find(i => i.id === id) : null;
+  document.getElementById("menuModalTitle").textContent = item ? "Edit menu item" : "Add menu item";
+  document.getElementById("miName").value = item ? item.item_name : "";
+  document.getElementById("miCategory").value = item ? item.category : "";
+  document.getElementById("miPrice").value = item ? parseFloat(item.price||0) : "";
+  document.getElementById("miImage").value = item ? (item.image_url||"") : "";
+  document.getElementById("miAvailable").checked = item ? !!item.is_available : true;
+  document.getElementById("menuModalOverlay").classList.add("open");
+}
+function closeMenuModal() {
+  document.getElementById("menuModalOverlay").classList.remove("open");
+  editingMenuItemId = null;
+}
+async function saveMenuItem() {
+  var name = document.getElementById("miName").value.trim();
+  var category = document.getElementById("miCategory").value.trim();
+  var price = parseFloat(document.getElementById("miPrice").value || 0);
+  if (!name || !category) { showNotify ? showNotify("Name and category are required", "error") : alert("Name and category are required"); return; }
+  var payload = {
+    item_name: name,
+    category: category,
+    price: price,
+    image_url: document.getElementById("miImage").value.trim(),
+    is_available: document.getElementById("miAvailable").checked,
+  };
+  var btn = document.getElementById("miSaveBtn");
+  btn.disabled = true;
+  try {
+    var d = editingMenuItemId
+      ? await apiFetch("/hub/dine/menu/"+editingMenuItemId, { method: "PUT", body: JSON.stringify(payload) })
+      : await apiFetch("/hub/dine/menu", { method: "POST", body: JSON.stringify(payload) });
+    if (!d.success) { alert(d.error || "Could not save menu item"); return; }
+    closeMenuModal();
+    await loadMenuPage();
+  } catch (e) {
+    alert("Connection error: " + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+async function toggleMenuAvailable(id, checked) {
+  var item = menuMgmtCache.find(i => i.id === id);
+  if (!item) return;
+  try {
+    await apiFetch("/hub/dine/menu/"+id, { method: "PUT", body: JSON.stringify({
+      item_name: item.item_name, category: item.category, price: item.price, image_url: item.image_url, is_available: checked
+    })});
+    item.is_available = checked ? 1 : 0;
+    renderMenuCards();
+  } catch (e) { alert("Could not update availability: " + e.message); }
+}
+async function deleteMenuItemUI(id) {
+  var item = menuMgmtCache.find(i => i.id === id);
+  if (!confirm("Delete \"" + (item ? item.item_name : "this item") + "\" from the menu? This cannot be undone.")) return;
+  try {
+    var d = await apiFetch("/hub/dine/menu/"+id, { method: "DELETE" });
+    if (!d.success) { alert(d.error || "Could not delete item"); return; }
+    await loadMenuPage();
+  } catch (e) { alert("Connection error: " + e.message); }
+}
+
 // ── POS ──────────────────────────────────────────────────────────
 async function openPOS() {
   document.getElementById("posOverlay").classList.add("open");
@@ -865,7 +1419,13 @@ function setPosCategory(cat, el) {
 function renderPosMenu() {
   var search = (document.getElementById("posSearch")||{value:""}).value.toLowerCase();
   var items = MENU.filter(i=>(posCat==="All"||i.cat===posCat) && (!search||i.name.toLowerCase().includes(search)));
-  document.getElementById("posMenuGrid").innerHTML = items.length ? items.map(i=>'<div class="pos-item" onclick="addPosItem('+i.id+')"><div class="pos-item-emoji">'+i.emoji+'</div><div class="pos-item-name">'+i.name+'</div><div class="pos-item-cat">'+i.cat+'</div><div class="pos-item-price">RM '+i.price.toFixed(2)+'</div></div>').join("") : '<div class="pos-empty" style="grid-column:1/-1"><i class="ti ti-search"></i><p>No items found</p></div>';
+  document.getElementById("posMenuGrid").innerHTML = items.length ? items.map(i=>{
+    var img = i.image ? '<img class="pos-item-img" src="'+i.image+'" alt="'+i.name+'" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=&quot;pos-item-emoji-fallback&quot;>'+i.emoji+'</div>\'">' : '<div class="pos-item-emoji-fallback">'+i.emoji+'</div>';
+    return '<div class="pos-item" onclick="addPosItem('+i.id+')">' +
+      '<div class="pos-item-imgwrap">'+img+'</div>' +
+      '<div class="pos-item-body"><div class="pos-item-name">'+i.name+'</div><div class="pos-item-cat">'+i.cat+'</div><div class="pos-item-price">RM '+i.price.toFixed(2)+'</div></div>' +
+    '</div>';
+  }).join("") : '<div class="pos-empty" style="grid-column:1/-1"><i class="ti ti-search"></i><p>No items found</p></div>';
 }
 function addPosItem(id) {
   var item = MENU.find(m=>m.id===id);

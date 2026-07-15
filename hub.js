@@ -166,11 +166,93 @@ async function sendWhatsAppMessage(to, text) {
   } catch (err) { console.error("❌ sendWhatsAppMessage:", err.response ? JSON.stringify(err.response.data) : err.message); }
 }
 
+// ── PLAN / ADD-ONS (package switcher demo) ────────────────────────────
+const PLAN_PRICING = {
+  mamak:      { monthly: 249, setup: 2499 },
+  restaurant: { monthly: 499, setup: 3999 },
+  foodcourt:  { monthly: 899, setup: 5999 },
+};
+const ADDON_CATALOG = {
+  whatsapp_ordering:     { name: "WhatsApp Online Ordering",    icon: "📱", price: 99,  desc: "Let customers order directly via WhatsApp chat" },
+  receipt_printer:       { name: "Receipt Printer Integration", icon: "🖨️", price: 49,  desc: "Auto-print receipts and kitchen tickets" },
+  advanced_analytics:    { name: "Advanced Analytics",          icon: "📊", price: 79,  desc: "Deep sales trends, peak hours, and item performance reports" },
+  customer_website:      { name: "Customer Website with Menu",  icon: "🌐", price: 149, desc: "Branded public menu website for your restaurant" },
+  online_payment:        { name: "Online Payment (FPX/Card)",   icon: "💳", price: 99,  desc: "Accept FPX and card payments online" },
+  supplier_management:   { name: "Supplier Management",         icon: "📦", price: 69,  desc: "Track suppliers, orders, and delivery schedules" },
+  loyalty_program:       { name: "Loyalty Program",              icon: "👥", price: 89,  desc: "Points and rewards to keep customers coming back" },
+  delivery_management:   { name: "Delivery Management",          icon: "🚗", price: 119, desc: "Assign riders and track delivery orders" },
+  digital_menu_board:    { name: "Digital Menu Board",            icon: "📸", price: 59,  desc: "Display your menu on a TV or tablet screen" },
+  staff_whatsapp_alerts: { name: "Staff WhatsApp Alerts",         icon: "🔔", price: 39,  desc: "Notify staff instantly about shifts and tasks via WhatsApp" },
+};
+
+router.get("/dine/settings", authMiddleware, async function(req, res) {
+  try {
+    var company = await DB.getCompany(DINE_COMPANY_ID);
+    var addonRows = await DB.getAddons(DINE_COMPANY_ID);
+    var addonByKey = {};
+    addonRows.forEach(function(a) { addonByKey[a.addon_key] = a; });
+    var addons = Object.keys(ADDON_CATALOG).map(function(key) {
+      var cat = ADDON_CATALOG[key];
+      var row = addonByKey[key];
+      return { key: key, name: cat.name, icon: cat.icon, description: cat.desc, monthly_price: cat.price, is_active: !!(row && row.is_active), activated_at: row ? row.activated_at : null };
+    });
+    var plan = (company && company.plan_type) || "restaurant";
+    res.json({ success: true, plan: plan, pricing: PLAN_PRICING, addons: addons });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.put("/dine/settings/plan", authMiddleware, async function(req, res) {
+  try {
+    var plan = req.body.plan;
+    if (["mamak", "restaurant", "foodcourt"].indexOf(plan) === -1) return res.status(400).json({ error: "plan must be 'mamak', 'restaurant', or 'foodcourt'" });
+    var ok = await DB.updateCompanyPlan(DINE_COMPANY_ID, plan);
+    if (!ok) return res.status(500).json({ error: "Could not update plan" });
+    res.json({ success: true, plan: plan });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.put("/dine/settings/addons", authMiddleware, async function(req, res) {
+  try {
+    var key = req.body.addon_key;
+    var isActive = !!req.body.is_active;
+    if (!ADDON_CATALOG[key]) return res.status(400).json({ error: "Unknown addon_key" });
+    var ok = await DB.upsertAddon(DINE_COMPANY_ID, key, isActive, ADDON_CATALOG[key].price);
+    if (!ok) return res.status(500).json({ error: "Could not update addon" });
+    res.json({ success: true, addon_key: key, is_active: isActive });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // ── POS: MENU ────────────────────────────────────────────────────────
 router.get("/dine/menu", authMiddleware, async function(req, res) {
   try {
     var items = await DB.getMenu(DINE_COMPANY_ID);
     res.json({ success: true, data: items });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.post("/dine/menu", authMiddleware, async function(req, res) {
+  try {
+    if (!req.body.item_name || !req.body.category) return res.status(400).json({ error: "item_name and category are required" });
+    var id = await DB.createMenuItem(Object.assign({}, req.body, { company_id: DINE_COMPANY_ID }));
+    if (!id) return res.status(500).json({ error: "Could not create menu item" });
+    res.json({ success: true, id: id });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.put("/dine/menu/:id", authMiddleware, async function(req, res) {
+  try {
+    if (!req.body.item_name || !req.body.category) return res.status(400).json({ error: "item_name and category are required" });
+    var ok = await DB.updateMenuItem(req.params.id, req.body, DINE_COMPANY_ID);
+    if (!ok) return res.status(500).json({ error: "Could not update menu item" });
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.delete("/dine/menu/:id", authMiddleware, async function(req, res) {
+  try {
+    var ok = await DB.deleteMenuItem(req.params.id, DINE_COMPANY_ID);
+    if (!ok) return res.status(500).json({ error: "Could not delete menu item" });
+    res.json({ success: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 

@@ -39,6 +39,32 @@ async function upsertCompany(data) {
   } catch(err) { console.error("upsertCompany:", err.message); return false; }
 }
 
+async function updateCompanyPlan(company_id, plan_type) {
+  try {
+    await pool.execute("UPDATE dine_companies SET plan_type=? WHERE company_id=?", [plan_type, company_id]);
+    return true;
+  } catch(err) { console.error("updateCompanyPlan:", err.message); return false; }
+}
+
+// ── ADD-ONS ─────────────────────────────────────────────────────────
+async function getAddons(company_id) {
+  try {
+    var [rows] = await pool.execute("SELECT * FROM dine_addons WHERE company_id=?", [company_id]);
+    return rows;
+  } catch(err) { console.error("getAddons:", err.message); return []; }
+}
+
+async function upsertAddon(company_id, addon_key, is_active, monthly_price) {
+  try {
+    await pool.execute(
+      "INSERT INTO dine_addons (company_id, addon_key, is_active, activated_at, monthly_price) VALUES (?,?,?,?,?) " +
+      "ON DUPLICATE KEY UPDATE is_active=VALUES(is_active), activated_at=IF(VALUES(is_active)=1, NOW(), activated_at), monthly_price=VALUES(monthly_price)",
+      [company_id, addon_key, is_active ? 1 : 0, is_active ? new Date() : null, monthly_price]
+    );
+    return true;
+  } catch(err) { console.error("upsertAddon:", err.message); return false; }
+}
+
 // ── EMPLOYEES ───────────────────────────────────────────────────────
 async function getAllActiveEmployees(company_id) {
   try {
@@ -171,11 +197,28 @@ async function getMenu(company_id) {
 async function createMenuItem(data) {
   try {
     var [result] = await pool.execute(
-      "INSERT INTO dine_menu_items (company_id, item_name, category, price, is_available) VALUES (?,?,?,?,?)",
-      [data.company_id, data.item_name, data.category || null, data.price || 0, data.is_available === false ? 0 : 1]
+      "INSERT INTO dine_menu_items (company_id, item_name, category, price, is_available, image_url) VALUES (?,?,?,?,?,?)",
+      [data.company_id, data.item_name, data.category || null, data.price || 0, data.is_available === false ? 0 : 1, data.image_url || null]
     );
     return result.insertId;
   } catch(err) { console.error("createMenuItem:", err.message); return null; }
+}
+
+async function updateMenuItem(id, data, company_id) {
+  try {
+    await pool.execute(
+      "UPDATE dine_menu_items SET item_name=?, category=?, price=?, is_available=?, image_url=? WHERE id=? AND company_id=?",
+      [data.item_name, data.category || null, data.price || 0, data.is_available === false ? 0 : 1, data.image_url || null, id, company_id]
+    );
+    return true;
+  } catch(err) { console.error("updateMenuItem:", err.message); return false; }
+}
+
+async function deleteMenuItem(id, company_id) {
+  try {
+    await pool.execute("DELETE FROM dine_menu_items WHERE id=? AND company_id=?", [id, company_id]);
+    return true;
+  } catch(err) { console.error("deleteMenuItem:", err.message); return false; }
 }
 
 // ── ORDERS ──────────────────────────────────────────────────────────
@@ -260,9 +303,14 @@ module.exports = {
   createLeaveRequest,
   getMenu,
   createMenuItem,
+  updateMenuItem,
+  deleteMenuItem,
   createOrder,
   getOrderById,
   getTodayOrders,
   updateOrderStatus,
   getOccupiedTables,
+  updateCompanyPlan,
+  getAddons,
+  upsertAddon,
 };
