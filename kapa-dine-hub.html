@@ -166,6 +166,17 @@ tr:hover td{background:#FDFAF9}
 .pos-close-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:var(--t)}
 .pos-close-btn:hover{background:var(--border)}
 .pos-body{flex:1;display:grid;grid-template-columns:1fr 370px;overflow:hidden;background:#fff}
+@media(max-width:768px){
+  .pos-body{grid-template-columns:1fr;grid-auto-rows:max-content;overflow-y:auto;overflow-x:hidden}
+  .pos-left{width:100%;border-right:none;overflow:visible}
+  /* flex:1 on these normally grows them to fill leftover space in a fixed-height flex parent.
+     Once .pos-left/.pos-right are auto-height grid rows on mobile (stacked, not fixed-height
+     panes), flex:1's implicit flex-basis:0 collapses them to near nothing instead of their
+     natural content height — same class of sizing bug as the POS menu cards. flex:none fixes it. */
+  .pos-menu-grid{overflow-y:visible;flex:none}
+  .pos-right{width:100%;max-width:100%;border-left:none;border-top:1px solid var(--border)}
+  .pos-order-items{overflow-y:visible;flex:none}
+}
 .pos-left{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;background:#fff}
 .pos-menu-header{padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0;background:#fff}
 .pos-table-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
