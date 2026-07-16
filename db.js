@@ -147,6 +147,16 @@ async function createInventoryItem(data) {
   } catch(err) { console.error("createInventoryItem:", err.message); return null; }
 }
 
+async function updateInventoryStock(company_id, item_name, new_stock) {
+  try {
+    var [result] = await pool.execute(
+      "UPDATE dine_inventory SET current_stock=? WHERE company_id=? AND LOWER(item_name)=LOWER(?)",
+      [new_stock, company_id, item_name]
+    );
+    return result.affectedRows > 0;
+  } catch(err) { console.error("updateInventoryStock:", err.message); return false; }
+}
+
 // ── PURCHASES ───────────────────────────────────────────────────────
 async function getPurchasesByDate(company_id, date) {
   try {
@@ -297,6 +307,7 @@ module.exports = {
   createDailySales,
   getInventory,
   createInventoryItem,
+  updateInventoryStock,
   getPurchasesByDate,
   createPurchase,
   getLeaveRequests,

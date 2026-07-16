@@ -318,15 +318,19 @@ router.post("/pos/kot", authMiddleware, async function(req, res) {
 
     var kotMsg = req.body.message;
     if (!kotMsg) {
-      kotMsg = "🧾 *KOT - Order #" + orderId + "*\nTable: " + (order.table || order.table_number || "-") + "\n\n";
-      items.forEach(function(i, idx) { kotMsg += (idx + 1) + ". " + i.name + " x" + i.qty + "\n"; });
-      if (order.notes) kotMsg += "\nNotes: " + order.notes;
+      var now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kuala_Lumpur" }));
+      var h12 = now.getHours() % 12 || 12;
+      var timeStr = String(h12).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0") + " " + (now.getHours() >= 12 ? "PM" : "AM");
+      kotMsg = "🍳 *New Order - Table " + (order.table || order.table_number || "-") + "*\n📋 *Order #" + orderId + "*\n⏰ *Time:* " + timeStr + "\n\nItems:\n";
+      items.forEach(function(i) { kotMsg += "• " + i.name + " × " + i.qty + "\n"; });
+      kotMsg += "\n💰 *Total:* RM " + parseFloat(order.total || 0).toFixed(2);
+      if (order.notes) kotMsg += "\n📝 *Notes:* " + order.notes;
     }
 
-    var chefList = await DB.getAllActiveEmployees(DINE_COMPANY_ID);
-    var chef = chefList.find(function(e) { return e.designation === "Chef"; });
+    // Demo: always routes to the owner's WhatsApp (kitchen_whatsapp/owner_whatsapp on
+    // dine_companies). A real deployment would route to the kitchen's own WhatsApp number.
     var company = await DB.getCompany(DINE_COMPANY_ID);
-    var kitchenNumber = chef ? chef.whatsapp_number : (company ? company.owner_whatsapp : null);
+    var kitchenNumber = company ? (company.kitchen_whatsapp || company.owner_whatsapp) : null;
     await sendWhatsAppMessage(kitchenNumber, kotMsg);
 
     res.json({ success: true, order_id: orderId });
